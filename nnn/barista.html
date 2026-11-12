@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Coffee Corner - Barista and Staff Dashboard">
+
+    <title>Staff Dashboard | Coffee Corner</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- ==================== HEADER ==================== -->
+
+    <header class="header">
+
+        <a href="index.html" class="logo">
+            Coffee<span>Corner</span>
+        </a>
+
+        <div class="user-info">
+
+            <span class="badge staff">Staff / Barista</span>
+
+            <span id="welcomeUser">Welcome, Diub</span>
+
+            <a href="#" class="btn btn-small btn-light" onclick="logout(); return false;">
+                Logout
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- ==================== NAVIGATION ==================== -->
+
+    <nav class="topnav">
+
+        <button type="button" id="nav-queue" class="active" onclick="showSection('queue')">
+            Order Preparation
+        </button>
+
+        <button type="button" id="nav-stock" onclick="showSection('stock')">
+            Stock Management
+        </button>
+
+        <button type="button" id="nav-waste" onclick="showSection('waste')">
+            Damaged / Expired Products
+        </button>
+
+    </nav>
+
+
+    <!-- ==================== MAIN CONTAINER ==================== -->
+
+    <main class="container">
+
+
+        <!-- =================================================
+             1. ORDER PREPARATION QUEUE
+        ================================================== -->
+
+        <section id="queue" class="page-section active">
+
+            <h2 class="page-title">
+                Order Preparation Queue
+            </h2>
+
+            <p class="page-subtitle">
+                View customer orders and update their preparation status.
+            </p>
+
+            <div id="queueMessage" class="message"></div>
+
+
+            <!-- ORDER SUMMARY -->
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <div class="stat-number" id="totalQueueOrders">
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Total Orders
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-number" id="pendingQueueOrders">
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Pending Orders
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-number" id="preparingQueueOrders">
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Preparing Orders
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-number" id="completedQueueOrders">
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Completed Orders
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ORDER QUEUE TABLE -->
+
+            <div class="card">
+
+                <h3>Customer Order List</h3>
+
+                <div class="search-bar">
+
+                    <input type="text" id="queueSearch" placeholder="Search by token or customer name..."
+                        onkeyup="renderPreparationQueue()">
+
+
+                    <select id="queueStatusFilter" onchange="renderPreparationQueue()">
+
+                        <option value="All">All Order Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Preparing">Preparing</option>
+                        <option value="Ready">Ready</option>
+                        <option value="Completed">Completed</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table class="data-table">
+
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Token No.</th>
+                                <th>Customer</th>
+                                <th>Coffee Items</th>
+                                <th>Quantity</th>
+                                <th>Order Time</th>
+                                <th>Order Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="queueTableBody">
+
+                            <tr>
+                                <td colspan="7">
+                                    Loading orders...
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <!-- UPDATE ORDER STATUS -->
+
+            <div class="card">
+
+                <h3>Update Order Preparation Status</h3>
+
+                <form id="queueForm" onsubmit="return updateOrderStatus()">
+
+                    <fieldset>
+
+                        <legend>Order Status Information</legend>
+
+                        <table class="form-table">
+
+                            <tr>
+
+                                <td>
+                                    <label for="queueToken">
+                                        Order Token:
+                                    </label>
+                                </td>
+
+                                <td>
+                                    <input type="text" id="queueToken" placeholder="Enter customer order token"
+                                        required>
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    <label for="orderStatus">
+                                        New Order Status:
+                                    </label>
+                                </td>
+
+                                <td>
+
+                                    <select id="orderStatus" required>
+
+                                        <option value="">
+                                            -- Select Status --
+                                        </option>
+
+                                        <option value="Pending">
+                                            Pending
+                                        </option>
+
+                                        <option value="Preparing">
+                                            Preparing
+                                        </option>
+
+                                        <option value="Ready">
+                                            Ready
+                                        </option>
+
+                                        <option value="Completed">
+                                            Completed
+                                        </option>
+
+                                    </select>
+
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+                    </fieldset>
+
+
+                    <div class="form-actions">
+
+                        <input type="submit" class="btn" value="Update Order Status">
+
+                        <button type="reset" class="btn btn-secondary" onclick="clearMessage('queueMessage')">
+                            Reset
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             2. STOCK MANAGEMENT
+        ================================================== -->
+
+        <section id="stock" class="page-section">
+
+            <h2 class="page-title">
+                Stock Management
+            </h2>
+
+            <p class="page-subtitle">
+                Monitor available ingredients and update stock quantities.
+            </p>
+
+            <div id="stockMessage" class="message"></div>
+
+
+            <!-- STOCK SUMMARY -->
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <div class="stat-number" id="totalStockItems">
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Total Stock Items
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-number" id="availableStockItems">
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Available Stock Items
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-number" id="lowStockItems">
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Low Stock Items
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-number" id="outOfStockItems">
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Out of Stock Items
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- STOCK LIST -->
+
+            <div class="card">
+
+                <h3>Available Stock Information</h3>
+
+                <div class="search-bar">
+
+                    <input type="text" id="stockSearch" placeholder="Search stock item..." onkeyup="renderStock()">
+
+
+                    <select id="stockStatusFilter" onchange="renderStock()">
+
+                        <option value="All">All Stock Status</option>
+                        <option value="Available">Available</option>
+                        <option value="Low Stock">Low Stock</option>
+                        <option value="Out of Stock">Out of Stock</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table class="data-table">
+
+                        <thead>
+                            <tr>
+                                <th>Stock ID</th>
+                                <th>Item Name</th>
+                                <th>Category</th>
+                                <th>Available Quantity</th>
+                                <th>Unit</th>
+                                <th>Minimum Stock</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="stockTableBody">
+
+                            <tr>
+                                <td colspan="7">
+                                    Loading stock information...
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <!-- UPDATE STOCK QUANTITY -->
+
+            <div class="card">
+
+                <h3>Update Stock Quantity</h3>
+
+                <form id="stockForm" onsubmit="return updateStockQuantity()">
+
+                    <fieldset>
+
+                        <legend>Stock Update Information</legend>
+
+                        <table class="form-table">
+
+                            <tr>
+
+                                <td>
+                                    <label for="stockItem">
+                                        Select Stock Item:
+                                    </label>
+                                </td>
+
+                                <td>
+
+                                    <select id="stockItem" required>
+
+                                        <option value="">
+                                            -- Select Stock Item --
+                                        </option>
+
+                                    </select>
+
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    <label for="stockQty">
+                                        New Quantity:
+                                    </label>
+                                </td>
+
+                                <td>
+
+                                    <input type="number" id="stockQty" min="0" step="0.01"
+                                        placeholder="Enter updated quantity" required>
+
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    <label for="stockUnit">
+                                        Unit:
+                                    </label>
+                                </td>
+
+                                <td>
+
+                                    <input type="text" id="stockUnit" placeholder="e.g. kg, litre, packet" required>
+
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+                    </fieldset>
+
+
+                    <div class="form-actions">
+
+                        <input type="submit" class="btn" value="Update Stock">
+
+                        <button type="reset" class="btn btn-secondary" onclick="clearMessage('stockMessage')">
+                            Reset
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             3. DAMAGED / EXPIRED PRODUCT REPORTING
+        ================================================== -->
+
+        <section id="waste" class="page-section">
+
+            <h2 class="page-title">
+                Damaged / Expired Product Reporting
+            </h2>
+
+            <p class="page-subtitle">
+                Report damaged, expired or spoiled ingredients
+                and maintain product waste records.
+            </p>
+
+            <div id="wasteMessage" class="message"></div>
+
+
+            <!-- WASTE REPORT FORM -->
+
+            <div class="row">
+
+                <div class="col card">
+
+                    <h3>Report Damaged or Expired Product</h3>
+
+                    <form id="wasteForm" onsubmit="return submitWasteReport()">
+
+                        <fieldset>
+
+                            <legend>Product Damage Information</legend>
+
+                            <table class="form-table">
+
+                                <tr>
+
+                                    <td>
+                                        <label for="wasteItem">
+                                            Product Name:
+                                        </label>
+                                    </td>
+
+                                    <td>
+
+                                        <select id="wasteItem" required>
+
+                                            <option value="">
+                                                -- Select Product --
+                                            </option>
+
+                                        </select>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td>
+                                        <label for="wasteQty">
+                                            Damaged Quantity:
+                                        </label>
+                                    </td>
+
+                                    <td>
+
+                                        <input type="number" id="wasteQty" min="0.01" step="0.01"
+                                            placeholder="Enter quantity" required>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td>
+                                        <label for="wasteUnit">
+                                            Unit:
+                                        </label>
+                                    </td>
+
+                                    <td>
+
+                                        <input type="text" id="wasteUnit" placeholder="e.g. kg, litre, packet" required>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td>
+                                        <label for="reason">
+                                            Damage Reason:
+                                        </label>
+                                    </td>
+
+                                    <td>
+
+                                        <select id="reason" required>
+
+                                            <option value="">
+                                                -- Select Reason --
+                                            </option>
+
+                                            <option value="Expired">
+                                                Expired Product
+                                            </option>
+
+                                            <option value="Damaged">
+                                                Physically Damaged
+                                            </option>
+
+                                            <option value="Spoiled">
+                                                Spoiled Product
+                                            </option>
+
+                                            <option value="Contaminated">
+                                                Contaminated Product
+                                            </option>
+
+                                            <option value="Other">
+                                                Other
+                                            </option>
+
+                                        </select>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td>
+                                        <label for="wasteDetails">
+                                            Additional Details:
+                                        </label>
+                                    </td>
+
+                                    <td>
+
+                                        <textarea id="wasteDetails"
+                                            placeholder="Describe the problem or damage"></textarea>
+
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                        </fieldset>
+
+
+                        <div class="form-actions">
+
+                            <input type="submit" class="btn" value="Submit Waste Report">
+
+                            <button type="reset" class="btn btn-secondary" onclick="clearMessage('wasteMessage')">
+                                Reset
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+
+                <!-- REPORTING GUIDELINES -->
+
+                <div class="col card">
+
+                    <h3>Reporting Guidelines</h3>
+
+                    <ul>
+
+                        <li>
+                            Select the damaged or expired product.
+                        </li>
+
+                        <li>
+                            Enter the affected quantity.
+                        </li>
+
+                        <li>
+                            Select the reason for damage.
+                        </li>
+
+                        <li>
+                            Provide additional information if necessary.
+                        </li>
+
+                        <li>
+                            Submit the report for record keeping.
+                        </li>
+
+                    </ul>
+
+                    <p class="hint">
+                        Damaged or expired products should not be used
+                        for preparing customer orders.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- WASTE REPORT HISTORY -->
+
+            <div class="card">
+
+                <h3>Damaged / Expired Product Records</h3>
+
+                <div class="search-bar">
+
+                    <input type="text" id="wasteSearch" placeholder="Search product or report..."
+                        onkeyup="renderWasteReports()">
+
+
+                    <select id="wasteReasonFilter" onchange="renderWasteReports()">
+
+                        <option value="All">All Reasons</option>
+                        <option value="Expired">Expired</option>
+                        <option value="Damaged">Damaged</option>
+                        <option value="Spoiled">Spoiled</option>
+                        <option value="Contaminated">Contaminated</option>
+                        <option value="Other">Other</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table class="data-table">
+
+                        <thead>
+                            <tr>
+                                <th>Report ID</th>
+                                <th>Product Name</th>
+                                <th>Quantity</th>
+                                <th>Unit</th>
+                                <th>Reason</th>
+                                <th>Details</th>
+                                <th>Reported By</th>
+                                <th>Report Date</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="wasteTableBody">
+
+                            <tr>
+                                <td colspan="8">
+                                    Loading waste reports...
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ==================== FOOTER ==================== -->
+
+    <footer class="footer">
+
+        <p>
+            &copy; 2026 Coffee Corner. All Rights Reserved.
+        </p>
+
+        <p>
+            Coffee Shop Management System
+        </p>
+
+    </footer>
+
+
+    <!-- ==================== JAVASCRIPT FILES ==================== -->
+
+    <script src="js/data.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/barista.js"></script>
+
+</body>
+
+</html>

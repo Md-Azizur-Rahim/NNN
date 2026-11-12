@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Coffee Corner Administrator Dashboard">
+    <meta name="theme-color" content="#5b3825">
+
+    <title>Admin Dashboard | Coffee Corner</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- ==================== HEADER ==================== -->
+
+    <header class="header">
+
+        <a href="index.html" class="logo">
+            Coffee<span>Corner</span>
+        </a>
+
+        <div class="user-info">
+
+            <span class="badge admin">Administrator</span>
+
+            <span id="welcomeUser">Welcome, Administrator</span>
+
+            <a href="#" class="btn btn-small btn-light" onclick="logout(); return false;">
+                Logout
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- ==================== NAVIGATION ==================== -->
+
+    <nav class="topnav">
+
+        <button type="button" id="nav-statsSection" class="active" onclick="showSection('statsSection')">
+            Sales Analytics
+        </button>
+
+        <button type="button" id="nav-menuSection" onclick="showSection('menuSection')">
+            Menu Management
+        </button>
+
+        <button type="button" id="nav-reviewsSection" onclick="showSection('reviewsSection')">
+            Review Management
+        </button>
+
+        <button type="button" id="nav-staffSection" onclick="showSection('staffSection')">
+            Staff Accounts
+        </button>
+
+    </nav>
+
+
+    <!-- ==================== MAIN CONTAINER ==================== -->
+
+    <main class="container">
+
+
+        <!-- ==================== 1. SALES ANALYTICS ==================== -->
+
+        <section id="statsSection" class="page-section active">
+
+            <h2 class="page-title">
+                Sales Analytics Dashboard
+            </h2>
+
+            <p class="page-subtitle">
+                A summary of coffee shop sales, orders and business performance.
+                <span id="reportTime" class="hint"></span>
+            </p>
+
+
+            <!-- Statistics Cards -->
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <div class="stat-number" id="statSales">৳ 0</div>
+                    <div class="stat-label">Today's Sales</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number" id="statOrders">0</div>
+                    <div class="stat-label">Today's Orders</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number" id="statMenuItems">0</div>
+                    <div class="stat-label">Active Menu Items</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number" id="statReviews">0</div>
+                    <div class="stat-label">Pending Reviews</div>
+                </div>
+
+            </div>
+
+
+            <!-- Sales Analysis Tables -->
+
+            <div class="row">
+
+                <!-- Best Selling Products -->
+
+                <div class="col card">
+
+                    <h3>Best-Selling Products</h3>
+
+                    <div class="table-wrapper">
+
+                        <table class="data-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Units Sold</th>
+                                    <th>Sales</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="bestSellingTableBody"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Peak Sales Hours -->
+
+                <div class="col card">
+
+                    <h3>Peak Sales Hours</h3>
+
+                    <div class="table-wrapper">
+
+                        <table class="data-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Orders</th>
+                                    <th>Sales</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="peakSalesTableBody"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button type="button" class="btn" onclick="generateReport()">
+                Refresh Report
+            </button>
+
+        </section>
+
+
+
+        <!-- ==================== 2. MENU MANAGEMENT ==================== -->
+
+        <section id="menuSection" class="page-section">
+
+            <h2 class="page-title">Menu Management</h2>
+
+            <p class="page-subtitle">
+                Add, view, edit, delete and search coffee shop menu items.
+            </p>
+
+            <div id="menuMessage" class="message"></div>
+
+
+            <div class="row">
+
+
+                <!-- Add / Edit Menu Form -->
+
+                <div class="col card">
+
+                    <h3 id="menuFormTitle">Add New Menu Item</h3>
+
+                    <form id="menuForm" onsubmit="return saveMenuItem()">
+
+                        <fieldset>
+
+                            <legend>Menu Item Details</legend>
+
+                            <table class="form-table">
+
+                                <tr>
+                                    <td>
+                                        <label for="itemName">Item Name:</label>
+                                    </td>
+
+                                    <td>
+                                        <input type="text" id="itemName" placeholder="e.g. Cappuccino" maxlength="100"
+                                            required>
+
+                                        <span class="error" id="itemNameError"></span>
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <td>
+                                        <label for="category">Category:</label>
+                                    </td>
+
+                                    <td>
+                                        <select id="category" required>
+
+                                            <option value="">-- Select Category --</option>
+                                            <option>Hot Coffee</option>
+                                            <option>Cold Coffee</option>
+                                            <option>Snacks</option>
+
+                                        </select>
+
+                                        <span class="error" id="categoryError"></span>
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <td>
+                                        <label for="price">Price (Tk):</label>
+                                    </td>
+
+                                    <td>
+                                        <input type="number" id="price" min="1" step="0.01" placeholder="Enter price"
+                                            required>
+
+                                        <span class="error" id="priceError"></span>
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <td>
+                                        <label for="availability">Availability:</label>
+                                    </td>
+
+                                    <td>
+                                        <select id="availability">
+
+                                            <option>Available</option>
+                                            <option>Unavailable</option>
+
+                                        </select>
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <td>
+                                        <label for="description">Description:</label>
+                                    </td>
+
+                                    <td>
+                                        <textarea id="description" placeholder="Enter item description"
+                                            maxlength="500"></textarea>
+                                    </td>
+                                </tr>
+
+                            </table>
+
+                        </fieldset>
+
+
+                        <input type="hidden" id="menuItemId">
+
+                        <input type="submit" id="menuSaveButton" class="btn" value="Add Menu Item">
+
+                        <button type="button" class="btn btn-secondary" onclick="resetMenuForm()">
+                            Cancel
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+
+                <!-- Menu List -->
+
+                <div class="col card">
+
+                    <h3>All Menu Items</h3>
+
+                    <div class="search-bar">
+
+                        <input type="text" id="menuSearch" placeholder="Search by item name or ID..."
+                            onkeyup="renderMenuItems()">
+
+                        <select id="menuCategoryFilter" onchange="renderMenuItems()">
+
+                            <option value="All">All Categories</option>
+                            <option>Hot Coffee</option>
+                            <option>Cold Coffee</option>
+                            <option>Snacks</option>
+
+                        </select>
+
+
+                        <select id="menuStatusFilter" onchange="renderMenuItems()">
+
+                            <option value="All">All Status</option>
+                            <option>Available</option>
+                            <option>Unavailable</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <p class="result-count" id="menuCount"></p>
+
+                    <div class="table-wrapper">
+
+                        <table class="data-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Item ID</th>
+                                    <th>Item Name</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="menuTableBody"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ==================== 3. REVIEW MANAGEMENT ==================== -->
+
+        <section id="reviewsSection" class="page-section">
+
+            <h2 class="page-title">Review & Rating Management</h2>
+
+            <p class="page-subtitle">
+                View customer feedback about coffee items, staff and the coffee shop.
+            </p>
+
+            <div id="reviewMessage" class="message"></div>
+
+
+            <!-- Customer Reviews -->
+
+            <div class="card">
+
+                <h3>Customer Reviews</h3>
+
+                <div class="search-bar">
+
+                    <input type="text" id="reviewSearch" placeholder="Search customer or review..."
+                        onkeyup="renderReviews()">
+
+
+                    <select id="ratingFilter" onchange="renderReviews()">
+
+                        <option value="All">All Ratings</option>
+                        <option value="5">5 Stars</option>
+                        <option value="4">4 Stars</option>
+                        <option value="3">3 Stars</option>
+                        <option value="2">2 Stars</option>
+                        <option value="1">1 Star</option>
+
+                    </select>
+
+
+                    <select id="reviewTypeFilter" onchange="renderReviews()">
+
+                        <option value="All">All Review Types</option>
+                        <option>Coffee Item</option>
+                        <option>Staff</option>
+                        <option>Coffee Shop</option>
+
+                    </select>
+
+                </div>
+
+
+                <p class="result-count" id="reviewCount"></p>
+
+                <div class="table-wrapper">
+
+                    <table class="data-table">
+
+                        <thead>
+                            <tr>
+                                <th>Review ID</th>
+                                <th>Customer</th>
+                                <th>Review Type</th>
+                                <th>Rating</th>
+                                <th>Comment</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="reviewTableBody"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Admin Response Form -->
+
+            <div class="card">
+
+                <h3>Submit Admin Response</h3>
+
+                <form id="responseForm" onsubmit="return saveReviewResponse()">
+
+                    <fieldset>
+
+                        <legend>Review Response</legend>
+
+                        <table class="form-table">
+
+                            <tr>
+                                <td>
+                                    <label for="responseReviewId">Review ID:</label>
+                                </td>
+
+                                <td>
+                                    <input type="text" id="responseReviewId" placeholder="Enter review ID" required>
+
+                                    <span class="error" id="responseReviewIdError"></span>
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td>
+                                    <label for="adminResponse">Admin Response:</label>
+                                </td>
+
+                                <td>
+                                    <textarea id="adminResponse" placeholder="Write your response" maxlength="1000"
+                                        required></textarea>
+
+                                    <span class="error" id="adminResponseError"></span>
+                                </td>
+                            </tr>
+
+                        </table>
+
+                    </fieldset>
+
+
+                    <input type="submit" class="btn" value="Submit Response">
+
+                    <button type="button" class="btn btn-secondary" onclick="resetResponseForm()">
+                        Cancel
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ==================== 4. STAFF ACCOUNT MANAGEMENT ==================== -->
+
+        <section id="staffSection" class="page-section">
+
+            <h2 class="page-title">Staff Account Management</h2>
+
+            <p class="page-subtitle">
+                Create, view, edit, delete and search cashier and staff accounts.
+            </p>
+
+            <div id="staffMessage" class="message"></div>
+
+
+            <div class="row">
+
+
+                <!-- Staff Form -->
+
+                <div class="col card">
+
+                    <h3 id="staffFormTitle">Add New Staff</h3>
+
+                    <form id="staffForm" onsubmit="return saveStaff()">
+
+                        <fieldset>
+
+                            <legend>Staff Details</legend>
+
+                            <table class="form-table">
+
+                                <tr>
+                                    <td>
+                                        <label for="staffName">Full Name:</label>
+                                    </td>
+
+                                    <td>
+                                        <input type="text" id="staffName" placeholder="Enter staff name" maxlength="100"
+                                            required>
+
+                                        <span class="error" id="staffNameError"></span>
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <td>
+                                        <label for="staffEmail">Email:</label>
+                                    </td>
+
+                                    <td>
+                                        <input type="email" id="staffEmail" placeholder="Enter email address"
+                                            maxlength="150" required>
+
+                                        <span class="error" id="staffEmailError"></span>
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <td>
+                                        <label for="staffRole">Role:</label>
+                                    </td>
+
+                                    <td>
+                                        <select id="staffRole" required>
+
+                                            <option value="">-- Select Role --</option>
+                                            <option>Cashier</option>
+                                            <option>Staff</option>
+
+                                        </select>
+
+                                        <span class="error" id="staffRoleError"></span>
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <td>
+                                        <label for="staffPassword">Password:</label>
+                                    </td>
+
+                                    <td>
+                                        <input type="password" id="staffPassword" placeholder="Enter password"
+                                            minlength="6">
+
+                                        <span class="error" id="staffPasswordError"></span>
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <td>Status:</td>
+
+                                    <td>
+
+                                        <input type="radio" id="staffActive" name="staffStatus" value="Active" checked>
+
+                                        <label for="staffActive" class="option-label">
+                                            Active
+                                        </label>
+
+
+                                        <input type="radio" id="staffBlocked" name="staffStatus" value="Blocked">
+
+                                        <label for="staffBlocked" class="option-label">
+                                            Blocked
+                                        </label>
+
+                                    </td>
+                                </tr>
+
+                            </table>
+
+                        </fieldset>
+
+
+                        <input type="hidden" id="staffId">
+
+                        <input type="submit" id="staffSaveButton" class="btn" value="Add Staff">
+
+                        <button type="button" class="btn btn-secondary" onclick="resetStaffForm()">
+                            Cancel
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+
+                <!-- Staff List -->
+
+                <div class="col card">
+
+                    <h3>All Staff Members</h3>
+
+                    <div class="search-bar">
+
+                        <input type="text" id="staffSearch" placeholder="Search by name, email or ID..."
+                            onkeyup="renderStaff()">
+
+
+                        <select id="staffRoleFilter" onchange="renderStaff()">
+
+                            <option value="All">All Roles</option>
+                            <option>Cashier</option>
+                            <option>Staff</option>
+
+                        </select>
+
+
+                        <select id="staffStatusFilter" onchange="renderStaff()">
+
+                            <option value="All">Any Status</option>
+                            <option>Active</option>
+                            <option>Blocked</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <p class="result-count" id="staffCount"></p>
+
+                    <div class="table-wrapper">
+
+                        <table class="data-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Staff ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="staffTableBody"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ==================== FOOTER ==================== -->
+
+    <footer class="footer">
+
+        <p>
+            &copy; 2026 Coffee Corner. All Rights Reserved.
+        </p>
+
+        <p>
+            Coffee Shop Management System
+        </p>
+
+    </footer>
+
+
+    <!-- ==================== JAVASCRIPT FILES ==================== -->
+
+    <script src="js/data.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/admin.js"></script>
+
+</body>
+
+</html>

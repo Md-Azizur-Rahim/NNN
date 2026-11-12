@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Coffee Corner - Customer Dashboard">
+
+    <title>Customer Dashboard | Coffee Corner</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- ============ HEADER ============ -->
+    <header class="header">
+
+        <a href="index.html" class="logo">
+            Coffee<span>Corner</span>
+        </a>
+
+        <div class="user-info">
+
+            <span class="badge customer">Customer</span>
+
+            <span id="welcomeUser">Welcome, Customer</span>
+
+            <a href="index.html" class="btn btn-small btn-light">
+                Home
+            </a>
+
+            <a href="#" class="btn btn-small" onclick="logout(); return false;">
+                Logout
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- ============ NAVIGATION ============ -->
+    <nav class="topnav">
+
+        <button type="button" id="nav-builder" onclick="showSection('builder')">
+            Custom Coffee Builder
+        </button>
+
+        <button type="button" id="nav-favorites" onclick="showSection('favorites')">
+            Favorite Items
+        </button>
+
+        <button type="button" id="nav-token" onclick="showSection('token')">
+            Order Token
+        </button>
+
+        <button type="button" id="nav-history" onclick="showSection('history')">
+            Order History
+        </button>
+
+        <button type="button" id="nav-review" onclick="showSection('review')">
+            Customer Review
+        </button>
+
+    </nav>
+
+
+    <!-- ============ MAIN CONTAINER ============ -->
+    <main class="container">
+
+
+        <!-- ============ CUSTOM COFFEE BUILDER ============ -->
+        <section id="builder" class="page-section">
+
+            <h2 class="page-title">Custom Coffee Builder</h2>
+
+            <p class="page-subtitle">
+                Customize your coffee by selecting coffee type,
+                size, milk type and sugar level.
+            </p>
+
+            <div id="builderMessage" class="message"></div>
+
+            <div class="row">
+
+                <!-- COFFEE CUSTOMIZATION FORM -->
+                <div class="col card">
+
+                    <h3>Customize Your Coffee</h3>
+
+                    <form id="coffeeForm" onsubmit="return placeCustomOrder()">
+
+                        <fieldset>
+
+                            <legend>Coffee Customization</legend>
+
+                            <table class="form-table">
+
+                                <tr>
+                                    <td>
+                                        <label for="coffee">Coffee Type:</label>
+                                    </td>
+
+                                    <td>
+                                        <select id="coffee" required>
+                                            <option value="">-- Select Coffee --</option>
+                                        </select>
+
+                                        <span id="coffeeError" class="error"></span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <label for="size">Coffee Size:</label>
+                                    </td>
+
+                                    <td>
+                                        <select id="size" required>
+
+                                            <option value="">-- Select Size --</option>
+                                            <option value="Small">Small</option>
+                                            <option value="Medium">Medium</option>
+                                            <option value="Large">Large</option>
+
+                                        </select>
+
+                                        <span id="sizeError" class="error"></span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <label for="milk">Milk Type:</label>
+                                    </td>
+
+                                    <td>
+                                        <select id="milk" required>
+
+                                            <option value="">-- Select Milk Type --</option>
+
+                                            <option value="Regular Milk">Regular Milk</option>
+                                            <option value="Low Fat Milk">Low Fat Milk</option>
+                                            <option value="Soy Milk">Soy Milk</option>
+                                            <option value="Almond Milk">Almond Milk</option>
+                                            <option value="No Milk">No Milk</option>
+
+                                        </select>
+
+                                        <span id="milkError" class="error"></span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <label for="sugar">Sugar Level:</label>
+                                    </td>
+
+                                    <td>
+                                        <select id="sugar" required>
+
+                                            <option value="">-- Select Sugar Level --</option>
+
+                                            <option value="No Sugar">No Sugar</option>
+                                            <option value="Low Sugar">Low Sugar</option>
+                                            <option value="Normal Sugar">Normal Sugar</option>
+                                            <option value="Extra Sugar">Extra Sugar</option>
+
+                                        </select>
+
+                                        <span id="sugarError" class="error"></span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <label for="quantity">Quantity:</label>
+                                    </td>
+
+                                    <td>
+                                        <input type="number" id="quantity" min="1" max="20" value="1" required>
+
+                                        <span id="quantityError" class="error"></span>
+                                    </td>
+                                </tr>
+
+                            </table>
+
+                        </fieldset>
+
+
+                        <!-- PRICE SUMMARY -->
+                        <div class="price-summary">
+
+                            <h3>Price Summary</h3>
+
+                            <p>
+                                Estimated Total Price:
+                                <strong id="estimatedPrice">৳ 0.00</strong>
+                            </p>
+
+                        </div>
+
+
+                        <button type="button" class="btn" onclick="calculateCustomPrice()">
+                            Calculate Price
+                        </button>
+
+                        <input type="submit" class="btn" value="Place Order">
+
+                        <button type="button" class="btn btn-secondary" onclick="resetCoffeeForm()">
+                            Reset
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+                <!-- CUSTOMIZATION INFORMATION -->
+                <div class="col card">
+
+                    <h3>Customization Information</h3>
+
+                    <ul>
+                        <li>Select your preferred coffee type.</li>
+                        <li>Choose Small, Medium or Large size.</li>
+                        <li>Select your preferred milk type.</li>
+                        <li>Choose your desired sugar level.</li>
+                        <li>Enter the required quantity.</li>
+                        <li>Check the estimated price before ordering.</li>
+                    </ul>
+
+                    <p class="hint">
+                        Click the Calculate Price button to calculate
+                        your customized coffee price.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ============ FAVORITE ITEMS ============ -->
+        <section id="favorites" class="page-section">
+
+            <h2 class="page-title">Favorite Coffee Items</h2>
+
+            <p class="page-subtitle">
+                Save your favorite coffee items for easy access
+                in the future.
+            </p>
+
+            <div id="favoriteMessage" class="message"></div>
+
+
+            <!-- ADD FAVORITE FORM -->
+            <div class="card">
+
+                <h3>Add Favorite Item</h3>
+
+                <form id="favoriteForm" onsubmit="return addFavoriteItem()">
+
+                    <fieldset>
+
+                        <legend>Favorite Item Information</legend>
+
+                        <table class="form-table">
+
+                            <tr>
+                                <td>
+                                    <label for="favoriteItem">
+                                        Select Coffee Item:
+                                    </label>
+                                </td>
+
+                                <td>
+                                    <select id="favoriteItem" required>
+
+                                        <option value="">
+                                            -- Select Coffee --
+                                        </option>
+
+                                    </select>
+                                </td>
+                            </tr>
+
+                        </table>
+
+                    </fieldset>
+
+                    <input type="submit" class="btn" value="Add to Favorites">
+
+                    <button type="reset" class="btn btn-secondary">
+                        Reset
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- FAVORITE ITEMS TABLE -->
+            <div class="card">
+
+                <h3>My Favorite Items</h3>
+
+                <div class="table-wrapper">
+
+                    <table class="data-table">
+
+                        <thead>
+                            <tr>
+                                <th>Favorite ID</th>
+                                <th>Coffee Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="favoriteTableBody"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ============ ORDER TOKEN & TRACKING ============ -->
+        <section id="token" class="page-section">
+
+            <h2 class="page-title">Order Token & Tracking</h2>
+
+            <p class="page-subtitle">
+                Track your coffee order using your unique order token.
+            </p>
+
+            <div id="tokenMessage" class="message"></div>
+
+
+            <!-- TOKEN SEARCH FORM -->
+            <div class="card">
+
+                <h3>Search Your Order</h3>
+
+                <form id="tokenForm" onsubmit="return searchOrderToken()">
+
+                    <fieldset>
+
+                        <legend>Order Tracking Information</legend>
+
+                        <table class="form-table">
+
+                            <tr>
+                                <td>
+                                    <label for="tokenNo">Order Token:</label>
+                                </td>
+
+                                <td>
+                                    <input type="text" id="tokenNo" placeholder="Enter your order token" required>
+                                </td>
+                            </tr>
+
+                        </table>
+
+                    </fieldset>
+
+                    <input type="submit" class="btn" value="Track Order">
+
+                    <button type="reset" class="btn btn-secondary">
+                        Reset
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- ORDER TRACKING RESULT -->
+            <div class="card">
+
+                <h3>Order Tracking Result</h3>
+
+                <div class="table-wrapper">
+
+                    <table class="data-table">
+
+                        <thead>
+                            <tr>
+                                <th>Token No.</th>
+                                <th>Coffee Item</th>
+                                <th>Order Date</th>
+                                <th>Total Amount</th>
+                                <th>Order Status</th>
+                                <th>Estimated Waiting Time</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="tokenTableBody"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ============ ORDER HISTORY ============ -->
+        <section id="history" class="page-section">
+
+            <h2 class="page-title">
+                Order History & Spending Summary
+            </h2>
+
+            <p class="page-subtitle">
+                View your previous orders, payment status
+                and total spending information.
+            </p>
+
+
+            <!-- ORDER SUMMARY -->
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <div class="stat-number" id="totalOrders">0</div>
+                    <div class="stat-label">Total Orders</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number" id="totalSpending">৳ 0</div>
+                    <div class="stat-label">Total Spending</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number" id="completedOrders">0</div>
+                    <div class="stat-label">Completed Orders</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number" id="pendingOrders">0</div>
+                    <div class="stat-label">Pending Orders</div>
+                </div>
+
+            </div>
+
+
+            <!-- ORDER HISTORY TABLE -->
+            <div class="card">
+
+                <h3>My Previous Orders</h3>
+
+                <div class="table-wrapper">
+
+                    <table class="data-table">
+
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Token No.</th>
+                                <th>Order Items</th>
+                                <th>Order Date</th>
+                                <th>Total Amount</th>
+                                <th>Payment Status</th>
+                                <th>Order Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="historyTableBody"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ============ CUSTOMER REVIEW ============ -->
+        <section id="review" class="page-section">
+
+            <h2 class="page-title">Customer Review & Rating</h2>
+
+            <p class="page-subtitle">
+                Share your experience with Coffee Corner.
+                Your feedback helps us improve our service.
+            </p>
+
+            <div id="reviewMessage" class="message" role="alert"></div>
+
+
+            <!-- REVIEW FORM -->
+            <div class="card">
+
+                <h3>Write Your Review</h3>
+
+                <form id="reviewForm" action="#" method="post" novalidate onsubmit="return saveReview()">
+
+                    <fieldset>
+
+                        <legend>Review Information</legend>
+
+                        <div class="form-grid">
+
+                            <!-- RATING -->
+                            <div class="form-group">
+
+                                <label for="reviewRating">
+                                    Rating:
+                                </label>
+
+                                <select id="reviewRating" required>
+
+                                    <option value="">
+                                        -- Select Rating --
+                                    </option>
+
+                                    <option value="5">
+                                        5 - Excellent
+                                    </option>
+
+                                    <option value="4">
+                                        4 - Good
+                                    </option>
+
+                                    <option value="3">
+                                        3 - Okay
+                                    </option>
+
+                                    <option value="2">
+                                        2 - Poor
+                                    </option>
+
+                                    <option value="1">
+                                        1 - Bad
+                                    </option>
+
+                                </select>
+
+                                <span id="reviewRatingError" class="error"></span>
+
+                            </div>
+
+
+                            <!-- REVIEW TEXT -->
+                            <div class="form-group">
+
+                                <label for="reviewText">
+                                    Your Review:
+                                </label>
+
+                                <textarea id="reviewText" maxlength="200" rows="5"
+                                    placeholder="Write your experience here (at least 10 characters)..."
+                                    oninput="countReview()" required></textarea>
+
+                                <span class="hint" id="reviewCounter">0 / 200</span>
+
+                                <span id="reviewTextError" class="error"></span>
+
+                            </div>
+
+                        </div>
+
+                    </fieldset>
+
+
+                    <button type="submit" class="btn">
+                        Submit Review
+                    </button>
+
+                    <button type="reset" class="btn btn-secondary"
+                        onclick="clearMessage('reviewMessage'); clearErrors(); countReview();">
+                        Reset
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- REVIEW INFORMATION -->
+            <div class="card">
+
+                <h3>Review Guidelines</h3>
+
+                <ul>
+                    <li>Select a rating from 1 to 5.</li>
+                    <li>Write at least 10 characters.</li>
+                    <li>Maximum review length is 200 characters.</li>
+                    <li>Please provide honest and respectful feedback.</li>
+                    <li>The administrator can view and manage customer reviews.</li>
+                </ul>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="footer">
+
+        &copy; 2026 Coffee Corner &middot;
+        Coffee Shop Management System
+
+    </footer>
+
+
+    <!-- ============ JAVASCRIPT FILES ============ -->
+    <script src="js/data.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/customer.js"></script>
+
+</body>
+
+</html>
