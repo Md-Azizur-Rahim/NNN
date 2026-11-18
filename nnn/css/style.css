@@ -532,6 +532,7 @@ input[type="submit"] {
    FIX 3: font-size and min-height reset, because the plain .error
    rule above would otherwise make this message smaller than the rest */
 .message.error {
+    display: block;
     font-size: 0.95rem;
     min-height: 0;
     background-color: #FFEBEE;

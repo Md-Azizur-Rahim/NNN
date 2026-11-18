@@ -1,57 +1,298 @@
 
 /* =========================================================
-   COFFEE CORNER - REGISTER JAVASCRIPT
-   Customer Registration and Validation
+   COFFEE CORNER - ROLE BASED REGISTRATION
+   Customer, Cashier and Staff Registration
    Technology: JavaScript + LocalStorage
    ========================================================= */
 
 
-/* ==================== 1. CUSTOMER REGISTRATION ==================== */
+/* ==================== 1. ERROR FIELD LIST ==================== */
 
-function registerCustomer() {
+const registerErrorIds = [
 
-    clearErrors();
+    "userTypeError",
+    "fullNameError",
+    "emailError",
+    "phoneError",
+    "addressError",
+    "preferredOrderError",
+    "cashierExperienceError",
+    "cashierShiftError",
+    "baristaExperienceError",
+    "baristaShiftError",
+    "usernameError",
+    "passwordError",
+    "confirmPasswordError",
+    "termsError"
 
-    clearMessage("registerMessage");
+];
 
 
-    /* ==================== 2. GET FORM VALUES ==================== */
+/* ==================== 2. FIELD ERROR ==================== */
 
-    const fullName = document.getElementById("fullName").value.trim();
+function setRegisterFieldError(id, message) {
 
-    const email = document.getElementById("email").value.trim();
+    const element = document.getElementById(id);
 
-    const phone = document.getElementById("phone").value.trim();
+    if (element) {
+        element.textContent = message;
+    }
 
-    const address = document.getElementById("address").value.trim();
+}
 
-    const username = document.getElementById("newUsername").value.trim();
 
-    const password = document.getElementById("newPassword").value;
+/* ==================== 3. CLEAR ERRORS ==================== */
 
-    const confirmPassword =
-        document.getElementById("confirmPassword").value;
+function clearRegisterErrors() {
 
+    registerErrorIds.forEach(function (id) {
+
+        setRegisterFieldError(id, "");
+
+    });
+
+}
+
+
+/* ==================== 4. SHOW MESSAGE ==================== */
+
+function showRegisterMessage(message, type) {
+
+    const element = document.getElementById("registerMessage");
+
+    if (!element) {
+        return;
+    }
+
+    element.textContent = message;
+
+    element.className = "message";
+
+    if (type === "success") {
+
+        element.classList.add("success");
+
+    } else if (type === "error") {
+
+        element.classList.add("error-message");
+
+    }
+
+}
+
+
+/* ==================== 5. CLEAR MESSAGE ==================== */
+
+function clearRegisterMessage() {
+
+    const element = document.getElementById("registerMessage");
+
+    if (element) {
+
+        element.textContent = "";
+        element.className = "message";
+
+    }
+
+}
+
+
+/* ==================== 6. GET SELECTED ROLE ==================== */
+
+function getSelectedRegisterType() {
+
+    const selected = document.querySelector(
+        'input[name="userType"]:checked'
+    );
+
+    return selected ? selected.value : "";
+
+}
+
+
+/* ==================== 7. GET SELECTED RADIO VALUE ==================== */
+
+function getRegisterRadioValue(name) {
+
+    const selected = document.querySelector(
+        'input[name="' + name + '"]:checked'
+    );
+
+    return selected ? selected.value : "";
+
+}
+
+
+/* ==================== 8. SHOW ROLE BASED FIELDS ==================== */
+
+function showTypeFields() {
+
+    const selectedRole = getSelectedRegisterType();
+
+    const formBody = document.getElementById("formBody");
+
+    const roleFields = {
+
+        Customer: "customerFields",
+
+        Cashier: "cashierFields",
+
+        Staff: "baristaFields"
+
+    };
+
+
+    // Show common form only after selecting a role
+
+    formBody.classList.toggle(
+        "active",
+        selectedRole !== ""
+    );
+
+
+    // Show only the selected role's fieldset
+
+    Object.keys(roleFields).forEach(function (role) {
+
+        const fieldset = document.getElementById(
+            roleFields[role]
+        );
+
+        const isSelected = role === selectedRole;
+
+        fieldset.classList.toggle(
+            "active",
+            isSelected
+        );
+
+        fieldset.disabled = !isSelected;
+
+    });
+
+
+    clearRegisterErrors();
+
+    toggleRegisterButton();
+
+}
+
+
+/* ==================== 9. REGISTER BUTTON CONTROL ==================== */
+
+function toggleRegisterButton() {
+
+    const selectedRole = getSelectedRegisterType();
+
+    const terms = document.getElementById("terms");
+
+    const button = document.getElementById("registerButton");
+
+    button.disabled = !(
+        selectedRole &&
+        terms.checked
+    );
+
+}
+
+
+/* ==================== 10. EXPERIENCE VALIDATION ==================== */
+
+function validateExperience(inputId, errorId) {
+
+    const value = document.getElementById(inputId).value.trim();
+
+    const experience = Number(value);
+
+    if (
+        value === "" ||
+        !Number.isInteger(experience) ||
+        experience < 0 ||
+        experience > 40
+    ) {
+
+        setRegisterFieldError(
+            errorId,
+            "Enter experience between 0 and 40 years."
+        );
+
+        return false;
+
+    }
+
+    return true;
+
+}
+
+
+/* ==================== 11. MAIN REGISTRATION FUNCTION ==================== */
+
+function registerAccount() {
+
+    clearRegisterErrors();
+
+    clearRegisterMessage();
+
+
+    /* GET SELECTED ROLE */
+
+    const role = getSelectedRegisterType();
 
     let isValid = true;
 
 
-    /* ==================== 3. NAME VALIDATION ==================== */
+    if (!role) {
 
-    if (fullName === "") {
-
-        showFieldError(
-            "fullNameError",
-            "Please enter your full name."
+        setRegisterFieldError(
+            "userTypeError",
+            "Please select an account type."
         );
 
-        isValid = false;
+        return false;
 
-    } else if (fullName.length < 2) {
+    }
 
-        showFieldError(
+
+    /* GET COMMON INFORMATION */
+
+    const fullName = document.getElementById(
+        "fullName"
+    ).value.trim();
+
+    const email = document.getElementById(
+        "email"
+    ).value.trim().toLowerCase();
+
+    const phone = document.getElementById(
+        "phone"
+    ).value.trim();
+
+    const address = document.getElementById(
+        "address"
+    ).value.trim();
+
+
+    /* GET ACCOUNT INFORMATION */
+
+    const username = document.getElementById(
+        "newUsername"
+    ).value.trim();
+
+    const password = document.getElementById(
+        "newPassword"
+    ).value;
+
+    const confirmPassword = document.getElementById(
+        "confirmPassword"
+    ).value;
+
+
+    /* ==================== 12. NAME VALIDATION ==================== */
+
+    if (fullName.length < 2) {
+
+        setRegisterFieldError(
             "fullNameError",
-            "Name must contain at least 2 characters."
+            "Please enter a valid full name."
         );
 
         isValid = false;
@@ -59,22 +300,13 @@ function registerCustomer() {
     }
 
 
-    /* ==================== 4. EMAIL VALIDATION ==================== */
+    /* ==================== 13. EMAIL VALIDATION ==================== */
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (email === "") {
+    if (!emailPattern.test(email)) {
 
-        showFieldError(
-            "emailError",
-            "Please enter your email address."
-        );
-
-        isValid = false;
-
-    } else if (!emailPattern.test(email)) {
-
-        showFieldError(
+        setRegisterFieldError(
             "emailError",
             "Please enter a valid email address."
         );
@@ -84,22 +316,13 @@ function registerCustomer() {
     }
 
 
-    /* ==================== 5. PHONE VALIDATION ==================== */
+    /* ==================== 14. PHONE VALIDATION ==================== */
 
     const phonePattern = /^01[3-9]\d{8}$/;
 
-    if (phone === "") {
+    if (!phonePattern.test(phone)) {
 
-        showFieldError(
-            "phoneError",
-            "Please enter your phone number."
-        );
-
-        isValid = false;
-
-    } else if (!phonePattern.test(phone)) {
-
-        showFieldError(
+        setRegisterFieldError(
             "phoneError",
             "Enter a valid 11-digit Bangladeshi mobile number."
         );
@@ -109,11 +332,11 @@ function registerCustomer() {
     }
 
 
-    /* ==================== 6. ADDRESS VALIDATION ==================== */
+    /* ==================== 15. ADDRESS VALIDATION ==================== */
 
-    if (address === "") {
+    if (address.length < 3) {
 
-        showFieldError(
+        setRegisterFieldError(
             "addressError",
             "Please enter your address."
         );
@@ -123,20 +346,155 @@ function registerCustomer() {
     }
 
 
-    /* ==================== 7. USERNAME VALIDATION ==================== */
+    /* ==================== 16. ROLE SPECIFIC VALIDATION ==================== */
 
-    if (username === "") {
+    let roleDetails = {};
 
-        showFieldError(
-            "usernameError",
-            "Please choose a username."
+
+    // CUSTOMER
+
+    if (role === "Customer") {
+
+        const preferredOrder = document.getElementById(
+            "preferredOrder"
+        ).value;
+
+        const favoriteCoffee = document.getElementById(
+            "favoriteCoffee"
+        ).value;
+
+
+        if (!preferredOrder) {
+
+            setRegisterFieldError(
+                "preferredOrderError",
+                "Please select your preferred order type."
+            );
+
+            isValid = false;
+
+        }
+
+
+        roleDetails = {
+
+            preferredOrder: preferredOrder,
+
+            favoriteCoffee: favoriteCoffee
+
+        };
+
+    }
+
+
+    // CASHIER
+
+    else if (role === "Cashier") {
+
+        const experienceValid = validateExperience(
+            "cashierExperience",
+            "cashierExperienceError"
         );
 
-        isValid = false;
+        const preferredShift = getRegisterRadioValue(
+            "cashierShift"
+        );
 
-    } else if (username.length < 4) {
 
-        showFieldError(
+        if (!experienceValid) {
+            isValid = false;
+        }
+
+
+        if (!preferredShift) {
+
+            setRegisterFieldError(
+                "cashierShiftError",
+                "Please select your preferred shift."
+            );
+
+            isValid = false;
+
+        }
+
+
+        roleDetails = {
+
+            experienceYears: document.getElementById(
+                "cashierExperience"
+            ).value,
+
+            preferredShift: preferredShift
+
+        };
+
+    }
+
+
+    // STAFF / BARISTA
+
+    else if (role === "Staff") {
+
+        const experienceValid = validateExperience(
+            "baristaExperience",
+            "baristaExperienceError"
+        );
+
+        const preferredShift = getRegisterRadioValue(
+            "baristaShift"
+        );
+
+
+        if (!experienceValid) {
+            isValid = false;
+        }
+
+
+        if (!preferredShift) {
+
+            setRegisterFieldError(
+                "baristaShiftError",
+                "Please select your preferred shift."
+            );
+
+            isValid = false;
+
+        }
+
+
+        const skills = Array.from(
+
+            document.querySelectorAll(
+                'input[name="baristaSkills"]:checked'
+            )
+
+        ).map(function (input) {
+
+            return input.value;
+
+        });
+
+
+        roleDetails = {
+
+            experienceYears: document.getElementById(
+                "baristaExperience"
+            ).value,
+
+            preferredShift: preferredShift,
+
+            skills: skills
+
+        };
+
+    }
+
+
+    /* ==================== 17. USERNAME VALIDATION ==================== */
+
+    if (username.length < 4) {
+
+        setRegisterFieldError(
             "usernameError",
             "Username must contain at least 4 characters."
         );
@@ -145,9 +503,9 @@ function registerCustomer() {
 
     } else if (!/^[a-zA-Z0-9_]+$/.test(username)) {
 
-        showFieldError(
+        setRegisterFieldError(
             "usernameError",
-            "Username can contain letters, numbers and underscore only."
+            "Use letters, numbers and underscore only."
         );
 
         isValid = false;
@@ -155,20 +513,11 @@ function registerCustomer() {
     }
 
 
-    /* ==================== 8. PASSWORD VALIDATION ==================== */
+    /* ==================== 18. PASSWORD VALIDATION ==================== */
 
-    if (password.trim() === "") {
+    if (password.length < 6) {
 
-        showFieldError(
-            "passwordError",
-            "Please enter a password."
-        );
-
-        isValid = false;
-
-    } else if (password.length < 6) {
-
-        showFieldError(
+        setRegisterFieldError(
             "passwordError",
             "Password must contain at least 6 characters."
         );
@@ -178,11 +527,11 @@ function registerCustomer() {
     }
 
 
-    /* ==================== 9. CONFIRM PASSWORD ==================== */
+    /* ==================== 19. CONFIRM PASSWORD ==================== */
 
     if (confirmPassword === "") {
 
-        showFieldError(
+        setRegisterFieldError(
             "confirmPasswordError",
             "Please confirm your password."
         );
@@ -191,9 +540,25 @@ function registerCustomer() {
 
     } else if (password !== confirmPassword) {
 
-        showFieldError(
+        setRegisterFieldError(
             "confirmPasswordError",
             "Passwords do not match."
+        );
+
+        isValid = false;
+
+    }
+
+
+    /* ==================== 20. TERMS VALIDATION ==================== */
+
+    const terms = document.getElementById("terms").checked;
+
+    if (!terms) {
+
+        setRegisterFieldError(
+            "termsError",
+            "Please accept the terms and conditions."
         );
 
         isValid = false;
@@ -206,12 +571,27 @@ function registerCustomer() {
     }
 
 
-    /* ==================== 10. GET EXISTING USERS ==================== */
+    /* ==================== 21. CHECK DATABASE ==================== */
 
-    const users = CoffeeData.get("users");
+    if (
+        typeof CoffeeData === "undefined" ||
+        typeof CoffeeData.get !== "function"
+    ) {
+
+        showRegisterMessage(
+            "System data is unavailable. Please refresh the page.",
+            "error"
+        );
+
+        return false;
+
+    }
 
 
-    /* ==================== 11. CHECK DUPLICATE USERNAME ==================== */
+    const users = CoffeeData.get("users") || [];
+
+
+    /* ==================== 22. CHECK DUPLICATE USERNAME ==================== */
 
     const existingUsername = users.find(function (user) {
 
@@ -223,7 +603,7 @@ function registerCustomer() {
 
     if (existingUsername) {
 
-        showFieldError(
+        setRegisterFieldError(
             "usernameError",
             "This username is already registered."
         );
@@ -233,19 +613,18 @@ function registerCustomer() {
     }
 
 
-    /* ==================== 12. CHECK DUPLICATE EMAIL ==================== */
+    /* ==================== 23. CHECK DUPLICATE EMAIL ==================== */
 
     const existingEmail = users.find(function (user) {
 
-        return String(user.email || "").toLowerCase() ===
-            email.toLowerCase();
+        return String(user.email || "").toLowerCase() === email;
 
     });
 
 
     if (existingEmail) {
 
-        showFieldError(
+        setRegisterFieldError(
             "emailError",
             "This email address is already registered."
         );
@@ -255,9 +634,22 @@ function registerCustomer() {
     }
 
 
-    /* ==================== 13. CREATE CUSTOMER ACCOUNT ==================== */
+    /* ==================== 24. CREATE USER ACCOUNT ==================== */
 
-    const newCustomer = {
+    const createdAt = typeof getCurrentDateTime === "function"
+        ? getCurrentDateTime()
+        : new Date().toISOString();
+
+
+    // Customer accounts are Active.
+    // Cashier and Staff applications remain Pending.
+
+    const accountStatus = role === "Customer"
+        ? "Active"
+        : "Pending";
+
+
+    const newUser = {
 
         id: CoffeeData.nextId("users"),
 
@@ -273,27 +665,31 @@ function registerCustomer() {
 
         password: password,
 
-        role: "Customer",
+        role: role,
 
-        status: "Active",
+        status: accountStatus,
 
-        createdAt: getCurrentDateTime()
+        ...roleDetails,
+
+        createdAt: createdAt
 
     };
 
 
-    /* ==================== 14. SAVE CUSTOMER DATA ==================== */
+    /* ==================== 25. SAVE USER DATA ==================== */
 
-    users.push(newCustomer);
+    const updatedUsers = users.concat([newUser]);
 
-    const saved = CoffeeData.set("users", users);
+    const userSaved = CoffeeData.set(
+        "users",
+        updatedUsers
+    );
 
 
-    if (!saved) {
+    if (!userSaved) {
 
-        setMessage(
-            "registerMessage",
-            "Registration failed. Please try again.",
+        showRegisterMessage(
+            "Unable to save registration. Please try again.",
             "error"
         );
 
@@ -302,27 +698,116 @@ function registerCustomer() {
     }
 
 
-    /* ==================== 15. SUCCESS MESSAGE ==================== */
+    /* ==================== 26. SAVE STAFF APPLICATION ==================== */
 
-    setMessage(
-        "registerMessage",
-        "Registration successful! You can now log in.",
+    if (role === "Cashier" || role === "Staff") {
+
+        const staff = CoffeeData.get("staff") || [];
+
+
+        const newStaffApplication = {
+
+            id: CoffeeData.nextId("staff"),
+
+            userId: newUser.id,
+
+            name: fullName,
+
+            email: email,
+
+            phone: phone,
+
+            address: address,
+
+            role: role,
+
+            status: "Pending",
+
+            ...roleDetails,
+
+            createdAt: createdAt
+
+        };
+
+
+        const updatedStaff = staff.concat([
+            newStaffApplication
+        ]);
+
+
+        const staffSaved = CoffeeData.set(
+            "staff",
+            updatedStaff
+        );
+
+
+        // Roll back the user account if staff application
+        // could not be saved.
+
+        if (!staffSaved) {
+
+            CoffeeData.set("users", users);
+
+            showRegisterMessage(
+                "Unable to save staff application. Please try again.",
+                "error"
+            );
+
+            return false;
+
+        }
+
+    }
+
+
+    /* ==================== 27. SUCCESS MESSAGE ==================== */
+
+    let successMessage = "";
+
+
+    if (role === "Customer") {
+
+        successMessage =
+            "Customer registration successful! You can now log in.";
+
+    } else if (role === "Cashier") {
+
+        successMessage =
+            "Cashier application submitted successfully! Please wait for Administrator approval.";
+
+    } else {
+
+        successMessage =
+            "Staff / Barista application submitted successfully! Please wait for Administrator approval.";
+
+    }
+
+
+    /* ==================== 28. RESET FORM ==================== */
+
+    resetRegisterForm();
+
+    showRegisterMessage(
+        successMessage,
         "success"
     );
 
 
-    /* ==================== 16. RESET FORM ==================== */
+    /* ==================== 29. CUSTOMER REDIRECTION ==================== */
 
-    document.getElementById("registerForm").reset();
+    if (role === "Customer") {
 
+        setTimeout(function () {
 
-    /* ==================== 17. REDIRECT TO LOGIN ==================== */
+            const rootPath = typeof getRootPath === "function"
+                ? getRootPath()
+                : "";
 
-    setTimeout(function () {
+            window.location.href = rootPath + "login.html";
 
-        window.location.href = getRootPath() + "login.html";
+        }, 1500);
 
-    }, 1500);
+    }
 
 
     return false;
@@ -330,18 +815,26 @@ function registerCustomer() {
 }
 
 
-/* ==================== 18. CLEAR REGISTRATION MESSAGE ==================== */
+/* ==================== 30. RESET REGISTRATION FORM ==================== */
 
-function clearRegisterMessage() {
+function resetRegisterForm() {
 
-    clearMessage("registerMessage");
+    const form = document.getElementById("registerForm");
 
-    clearErrors();
+    form.reset();
+
+    clearRegisterErrors();
+
+    clearRegisterMessage();
+
+    showTypeFields();
+
+    toggleRegisterButton();
 
 }
 
 
-/* ==================== 19. REGISTRATION PAGE INITIALIZATION ==================== */
+/* ==================== 31. PAGE INITIALIZATION ==================== */
 
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -351,6 +844,12 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
+    clearRegisterErrors();
+
     clearRegisterMessage();
+
+    showTypeFields();
+
+    toggleRegisterButton();
 
 });

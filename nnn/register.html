@@ -4,15 +4,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Register as a customer at Coffee Corner">
-    <title>Customer Registration | Coffee Corner</title>
+    <meta name="description" content="Register for Coffee Corner">
+    <title>Register | Coffee Corner</title>
 
     <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .form-body,
+        .type-fields {
+            display: none;
+        }
+
+        .form-body.active,
+        .type-fields.active {
+            display: block;
+        }
+
+        .type-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .type-option {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 18px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #fff;
+        }
+
+        .type-option:has(input:checked) {
+            border: 2px solid #8b5e3c;
+            background: #faf4ef;
+        }
+
+        .type-option input {
+            width: auto;
+        }
+
+        .type-option strong {
+            font-size: 17px;
+        }
+
+        .type-option .hint {
+            font-size: 13px;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        #registerButton:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+
 </head>
 
 <body>
 
-    <!-- ============ HEADER ============ -->
+    <!-- HEADER -->
+
     <header class="header">
 
         <a href="index.html" class="logo">
@@ -34,183 +95,619 @@
     </header>
 
 
-    <!-- ============ MAIN CONTAINER ============ -->
+    <!-- MAIN CONTAINER -->
+
     <main class="container">
 
-        <!-- active class added to make registration section visible -->
         <section class="page-section active">
 
-            <h2 class="page-title">Create Your Customer Account</h2>
+            <div class="card" style="max-width: 800px; margin: 30px auto;">
 
-            <p class="page-subtitle">
-                Join Coffee Corner and enjoy a personalized
-                coffee ordering experience.
-            </p>
+                <h2 class="page-title">
+                    Create Your Account
+                </h2>
 
-
-            <!-- ============ REGISTRATION FORM ============ -->
-            <div class="card" style="max-width: 650px; margin: 30px auto;">
-
-                <h3>Customer Registration</h3>
-
-                <div id="registerMessage" class="message"></div>
+                <p class="page-subtitle">
+                    Join Coffee Corner. Select your account type
+                    and complete the registration form.
+                </p>
 
 
-                <form id="registerForm" onsubmit="return registerCustomer()">
+                <div id="registerMessage" class="message" aria-live="polite">
+                </div>
 
-                    <!-- PERSONAL INFORMATION -->
+
+                <form id="registerForm" onsubmit="return registerAccount()" novalidate>
+
+
+                    <!-- STEP 1: SELECT USER TYPE -->
+
                     <fieldset>
 
-                        <legend>Personal Information</legend>
+                        <legend>
+                            Step 1 · Register As *
+                        </legend>
 
-                        <table class="form-table">
-
-                            <tr>
-                                <td>
-                                    <label for="fullName">
-                                        Full Name:
-                                    </label>
-                                </td>
-
-                                <td>
-                                    <input type="text" id="fullName" name="fullName" placeholder="Enter your full name"
-                                        autocomplete="name" required>
-
-                                    <span class="error" id="fullNameError"></span>
-                                </td>
-                            </tr>
+                        <div class="type-grid">
 
 
-                            <tr>
-                                <td>
-                                    <label for="email">
-                                        Email Address:
-                                    </label>
-                                </td>
+                            <!-- CUSTOMER -->
 
-                                <td>
-                                    <input type="email" id="email" name="email" placeholder="Enter your email"
-                                        autocomplete="email" required>
+                            <label class="type-option" for="typeCustomer">
 
-                                    <span class="error" id="emailError"></span>
-                                </td>
-                            </tr>
+                                <input type="radio" id="typeCustomer" name="userType" value="Customer"
+                                    onchange="showTypeFields()">
 
+                                <strong>Customer</strong>
 
-                            <tr>
-                                <td>
-                                    <label for="phone">
-                                        Phone Number:
-                                    </label>
-                                </td>
+                                <span class="hint">
+                                    Order coffee, save favorites
+                                    and submit reviews.
+                                </span>
 
-                                <td>
-                                    <input type="tel" id="phone" name="phone" placeholder="01XXXXXXXXX"
-                                        autocomplete="tel" required>
-
-                                    <span class="error" id="phoneError"></span>
-                                </td>
-                            </tr>
+                            </label>
 
 
-                            <tr>
-                                <td>
-                                    <label for="address">
-                                        Address:
-                                    </label>
-                                </td>
+                            <!-- CASHIER -->
 
-                                <td>
-                                    <textarea id="address" name="address" placeholder="Enter your address"
-                                        autocomplete="street-address" required></textarea>
+                            <label class="type-option" for="typeCashier">
 
-                                    <span class="error" id="addressError"></span>
-                                </td>
-                            </tr>
+                                <input type="radio" id="typeCashier" name="userType" value="Cashier"
+                                    onchange="showTypeFields()">
 
-                        </table>
+                                <strong>Cashier</strong>
+
+                                <span class="hint">
+                                    Manage customer billing
+                                    and payment processing.
+                                </span>
+
+                            </label>
+
+
+                            <!-- STAFF / BARISTA -->
+
+                            <label class="type-option" for="typeStaff">
+
+                                <input type="radio" id="typeStaff" name="userType" value="Staff"
+                                    onchange="showTypeFields()">
+
+                                <strong>Staff / Barista</strong>
+
+                                <span class="hint">
+                                    Prepare coffee, manage orders
+                                    and monitor stock.
+                                </span>
+
+                            </label>
+
+                        </div>
+
+                        <span class="error" id="userTypeError"></span>
+
+                        <p class="hint">
+                            Cashier and Staff accounts require
+                            Administrator approval.
+                        </p>
 
                     </fieldset>
 
 
 
-                    <!-- ACCOUNT INFORMATION -->
-                    <fieldset>
+                    <!-- FORM BODY -->
 
-                        <legend>Account Information</legend>
-
-                        <table class="form-table">
-
-                            <tr>
-                                <td>
-                                    <label for="newUsername">
-                                        Username:
-                                    </label>
-                                </td>
-
-                                <td>
-                                    <input type="text" id="newUsername" name="username" placeholder="Choose a username"
-                                        autocomplete="username" required>
-
-                                    <span class="error" id="usernameError"></span>
-                                </td>
-                            </tr>
+                    <div id="formBody" class="form-body">
 
 
-                            <tr>
-                                <td>
-                                    <label for="newPassword">
-                                        Password:
-                                    </label>
-                                </td>
+                        <!-- STEP 2: COMMON INFORMATION -->
 
-                                <td>
-                                    <input type="password" id="newPassword" name="password"
-                                        placeholder="Create a password" autocomplete="new-password" required>
+                        <fieldset>
 
-                                    <span class="error" id="passwordError"></span>
-                                </td>
-                            </tr>
+                            <legend>
+                                Step 2 · Personal Information
+                            </legend>
 
+                            <table class="form-table">
 
-                            <tr>
-                                <td>
-                                    <label for="confirmPassword">
-                                        Confirm Password:
-                                    </label>
-                                </td>
+                                <tr>
 
-                                <td>
-                                    <input type="password" id="confirmPassword" name="confirmPassword"
-                                        placeholder="Enter password again" autocomplete="new-password" required>
+                                    <td>
+                                        <label for="fullName">
+                                            Full Name: *
+                                        </label>
+                                    </td>
 
-                                    <span class="error" id="confirmPasswordError"></span>
-                                </td>
-                            </tr>
+                                    <td>
 
-                        </table>
+                                        <input type="text" id="fullName" name="fullName"
+                                            placeholder="Enter your full name" autocomplete="name">
 
-                    </fieldset>
+                                        <span class="error" id="fullNameError">
+                                        </span>
+
+                                    </td>
+
+                                </tr>
 
 
+                                <tr>
 
-                    <!-- REGISTRATION ACTIONS -->
-                    <div class="form-actions">
+                                    <td>
+                                        <label for="email">
+                                            Email Address: *
+                                        </label>
+                                    </td>
 
-                        <input type="submit" class="btn" value="Create Account">
+                                    <td>
 
-                        <button type="reset" class="btn btn-secondary" onclick="clearRegisterMessage()">
-                            Reset
-                        </button>
+                                        <input type="email" id="email" name="email" placeholder="Enter your email"
+                                            autocomplete="email">
+
+                                        <span class="error" id="emailError">
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td>
+                                        <label for="phone">
+                                            Phone Number: *
+                                        </label>
+                                    </td>
+
+                                    <td>
+
+                                        <input type="tel" id="phone" name="phone" placeholder="01XXXXXXXXX"
+                                            autocomplete="tel">
+
+                                        <span class="error" id="phoneError">
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td>
+                                        <label for="address">
+                                            Address: *
+                                        </label>
+                                    </td>
+
+                                    <td>
+
+                                        <textarea id="address" name="address" rows="3" placeholder="Enter your address"
+                                            autocomplete="street-address"></textarea>
+
+                                        <span class="error" id="addressError">
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                        </fieldset>
+
+
+
+                        <!-- STEP 3A: CUSTOMER DETAILS -->
+
+                        <fieldset id="customerFields" class="type-fields" disabled>
+
+                            <legend>
+                                Step 3 · Customer Details
+                            </legend>
+
+                            <table class="form-table">
+
+                                <tr>
+
+                                    <td>
+                                        <label for="preferredOrder">
+                                            Preferred Order Type: *
+                                        </label>
+                                    </td>
+
+                                    <td>
+
+                                        <select id="preferredOrder">
+
+                                            <option value="">
+                                                -- Select Order Type --
+                                            </option>
+
+                                            <option value="Dine-in">
+                                                Dine-in
+                                            </option>
+
+                                            <option value="Takeaway">
+                                                Takeaway
+                                            </option>
+
+                                        </select>
+
+                                        <span class="error" id="preferredOrderError">
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td>
+                                        <label for="favoriteCoffee">
+                                            Favourite Coffee:
+                                        </label>
+                                    </td>
+
+                                    <td>
+
+                                        <select id="favoriteCoffee">
+
+                                            <option value="">
+                                                -- Select Coffee --
+                                            </option>
+
+                                            <option value="Espresso">
+                                                Espresso
+                                            </option>
+
+                                            <option value="Cappuccino">
+                                                Cappuccino
+                                            </option>
+
+                                            <option value="Latte">
+                                                Latte
+                                            </option>
+
+                                            <option value="Americano">
+                                                Americano
+                                            </option>
+
+                                            <option value="Mocha">
+                                                Mocha
+                                            </option>
+
+                                            <option value="Iced Coffee">
+                                                Iced Coffee
+                                            </option>
+
+                                        </select>
+
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                        </fieldset>
+
+
+
+                        <!-- STEP 3B: CASHIER DETAILS -->
+
+                        <fieldset id="cashierFields" class="type-fields" disabled>
+
+                            <legend>
+                                Step 3 · Cashier Details
+                            </legend>
+
+                            <table class="form-table">
+
+                                <tr>
+
+                                    <td>
+                                        <label for="cashierExperience">
+                                            Experience (Years): *
+                                        </label>
+                                    </td>
+
+                                    <td>
+
+                                        <input type="number" id="cashierExperience" min="0" max="40"
+                                            placeholder="0 - 40">
+
+                                        <span class="error" id="cashierExperienceError">
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td>
+                                        Preferred Shift: *
+                                    </td>
+
+                                    <td>
+
+                                        <input type="radio" id="cashierMorning" name="cashierShift" value="Morning">
+
+                                        <label for="cashierMorning" class="option-label">
+                                            Morning
+                                        </label>
+
+
+                                        <input type="radio" id="cashierEvening" name="cashierShift" value="Evening">
+
+                                        <label for="cashierEvening" class="option-label">
+                                            Evening
+                                        </label>
+
+
+                                        <input type="radio" id="cashierFlexible" name="cashierShift" value="Flexible">
+
+                                        <label for="cashierFlexible" class="option-label">
+                                            Flexible
+                                        </label>
+
+                                        <span class="error" id="cashierShiftError">
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                            <p class="hint">
+                                Your cashier application will be
+                                reviewed by the Administrator.
+                            </p>
+
+                        </fieldset>
+
+
+
+                        <!-- STEP 3C: BARISTA / STAFF DETAILS -->
+
+                        <fieldset id="baristaFields" class="type-fields" disabled>
+
+                            <legend>
+                                Step 3 · Staff / Barista Details
+                            </legend>
+
+                            <table class="form-table">
+
+                                <tr>
+
+                                    <td>
+                                        <label for="baristaExperience">
+                                            Experience (Years): *
+                                        </label>
+                                    </td>
+
+                                    <td>
+
+                                        <input type="number" id="baristaExperience" min="0" max="40"
+                                            placeholder="0 - 40">
+
+                                        <span class="error" id="baristaExperienceError">
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td>
+                                        Preferred Shift: *
+                                    </td>
+
+                                    <td>
+
+                                        <input type="radio" id="baristaMorning" name="baristaShift" value="Morning">
+
+                                        <label for="baristaMorning" class="option-label">
+                                            Morning
+                                        </label>
+
+
+                                        <input type="radio" id="baristaEvening" name="baristaShift" value="Evening">
+
+                                        <label for="baristaEvening" class="option-label">
+                                            Evening
+                                        </label>
+
+
+                                        <input type="radio" id="baristaFlexible" name="baristaShift" value="Flexible">
+
+                                        <label for="baristaFlexible" class="option-label">
+                                            Flexible
+                                        </label>
+
+                                        <span class="error" id="baristaShiftError">
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td>
+                                        Skills:
+                                    </td>
+
+                                    <td>
+
+                                        <input type="checkbox" id="skillEspresso" name="baristaSkills"
+                                            value="Espresso Making">
+
+                                        <label for="skillEspresso" class="option-label">
+                                            Espresso Making
+                                        </label>
+
+                                        <br>
+
+                                        <input type="checkbox" id="skillLatte" name="baristaSkills" value="Latte Art">
+
+                                        <label for="skillLatte" class="option-label">
+                                            Latte Art
+                                        </label>
+
+                                        <br>
+
+                                        <input type="checkbox" id="skillBrewing" name="baristaSkills"
+                                            value="Coffee Brewing">
+
+                                        <label for="skillBrewing" class="option-label">
+                                            Coffee Brewing
+                                        </label>
+
+                                        <br>
+
+                                        <input type="checkbox" id="skillMachine" name="baristaSkills"
+                                            value="Machine Operation">
+
+                                        <label for="skillMachine" class="option-label">
+                                            Machine Operation
+                                        </label>
+
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                            <p class="hint">
+                                Your Staff / Barista application
+                                requires Administrator approval.
+                            </p>
+
+                        </fieldset>
+
+
+
+                        <!-- STEP 4: ACCOUNT INFORMATION -->
+
+                        <fieldset>
+
+                            <legend>
+                                Step 4 · Account Information
+                            </legend>
+
+                            <table class="form-table">
+
+                                <tr>
+
+                                    <td>
+                                        <label for="newUsername">
+                                            Username: *
+                                        </label>
+                                    </td>
+
+                                    <td>
+
+                                        <input type="text" id="newUsername" name="username"
+                                            placeholder="Choose a username" autocomplete="username">
+
+                                        <span class="error" id="usernameError">
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td>
+                                        <label for="newPassword">
+                                            Password: *
+                                        </label>
+                                    </td>
+
+                                    <td>
+
+                                        <input type="password" id="newPassword" name="password"
+                                            placeholder="At least 6 characters" autocomplete="new-password">
+
+                                        <span class="error" id="passwordError">
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td>
+                                        <label for="confirmPassword">
+                                            Confirm Password: *
+                                        </label>
+                                    </td>
+
+                                    <td>
+
+                                        <input type="password" id="confirmPassword" name="confirmPassword"
+                                            placeholder="Enter password again" autocomplete="new-password">
+
+                                        <span class="error" id="confirmPasswordError">
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+                            </table>
+
+                        </fieldset>
+
+
+
+                        <!-- TERMS AND CONDITIONS -->
+
+                        <p>
+
+                            <input type="checkbox" id="terms" name="terms" onchange="toggleRegisterButton()">
+
+                            <label for="terms" class="option-label">
+                                I agree to the Coffee Corner rules and terms *
+                            </label>
+
+                            <span class="error" id="termsError"></span>
+
+                        </p>
+
+
+
+                        <!-- REGISTRATION BUTTONS -->
+
+                        <div class="form-buttons">
+
+                            <input type="submit" id="registerButton" class="btn" value="Create Account" disabled>
+
+                            <button type="button" class="btn btn-secondary" onclick="resetRegisterForm()">
+
+                                Start Again
+
+                            </button>
+
+                        </div>
 
                     </div>
 
                 </form>
 
 
-
-                <!-- LOGIN LINK -->
-                <p style="text-align: center; margin-top: 20px;">
+                <p class="auth-switch" style="text-align:center; margin-top:20px;">
 
                     Already have an account?
 
@@ -228,12 +725,12 @@
 
 
 
-    <!-- ============ FOOTER ============ -->
+    <!-- FOOTER -->
+
     <footer class="footer">
 
         <p>
-            &copy; 2026 Coffee Corner.
-            All Rights Reserved.
+            &copy; 2026 Coffee Corner. All Rights Reserved.
         </p>
 
         <p>
@@ -244,7 +741,8 @@
 
 
 
-    <!-- ============ JAVASCRIPT FILES ============ -->
+    <!-- JAVASCRIPT FILES -->
+
     <script src="js/data.js"></script>
     <script src="js/common.js"></script>
     <script src="js/register.js"></script>
