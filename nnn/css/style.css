@@ -74,64 +74,64 @@ img {
 }
 
 
- 
-        .form-body,
-        .type-fields {
-            display: none;
-        }
 
-        .form-body.active,
-        .type-fields.active {
-            display: block;
-        }
+.form-body,
+.type-fields {
+    display: none;
+}
 
-        .type-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin: 15px 0;
-        }
+.form-body.active,
+.type-fields.active {
+    display: block;
+}
 
-        .type-option {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 18px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            cursor: pointer;
-            background: #fff;
-        }
+.type-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin: 15px 0;
+}
 
-        .type-option:has(input:checked) {
-            border: 2px solid #8b5e3c;
-            background: #faf4ef;
-        }
+.type-option {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 18px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #fff;
+}
 
-        .type-option input {
-            width: auto;
-        }
+.type-option:has(input:checked) {
+    border: 2px solid #8b5e3c;
+    background: #faf4ef;
+}
 
-        .type-option strong {
-            font-size: 17px;
-        }
+.type-option input {
+    width: auto;
+}
 
-        .type-option .hint {
-            font-size: 13px;
-        }
+.type-option strong {
+    font-size: 17px;
+}
 
-        .form-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
+.type-option .hint {
+    font-size: 13px;
+}
 
-        #registerButton:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-    
+.form-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+#registerButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 
 
 
