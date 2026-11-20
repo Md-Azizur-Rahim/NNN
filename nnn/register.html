@@ -9,65 +9,7 @@
 
     <link rel="stylesheet" href="css/style.css">
 
-    <style>
-        .form-body,
-        .type-fields {
-            display: none;
-        }
-
-        .form-body.active,
-        .type-fields.active {
-            display: block;
-        }
-
-        .type-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin: 15px 0;
-        }
-
-        .type-option {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 18px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            cursor: pointer;
-            background: #fff;
-        }
-
-        .type-option:has(input:checked) {
-            border: 2px solid #8b5e3c;
-            background: #faf4ef;
-        }
-
-        .type-option input {
-            width: auto;
-        }
-
-        .type-option strong {
-            font-size: 17px;
-        }
-
-        .type-option .hint {
-            font-size: 13px;
-        }
-
-        .form-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-
-        #registerButton:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-    </style>
-
+   
 </head>
 
 <body>
