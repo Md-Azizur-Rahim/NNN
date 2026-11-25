@@ -4,12 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <meta name="description" content="Coffee Corner - Barista and Staff Dashboard">
 
     <title>Staff Dashboard | Coffee Corner</title>
 
-    <!-- External CSS -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -25,11 +23,19 @@
 
         <div class="user-info">
 
-            <span class="badge staff">Staff / Barista</span>
+            <span class="badge staff">
+                Staff / Barista
+            </span>
 
-            <span id="welcomeUser">Welcome, Diub</span>
+            <span id="welcomeUser">
+                Welcome, Staff
+            </span>
 
-            <a href="#" class="btn btn-small btn-light" onclick="logout(); return false;">
+            <a href="index.html" class="btn btn-small btn-light">
+                Home
+            </a>
+
+            <a href="#" class="btn btn-small" onclick="logout(); return false;">
                 Logout
             </a>
 
@@ -76,7 +82,8 @@
                 View customer orders and update their preparation status.
             </p>
 
-            <div id="queueMessage" class="message"></div>
+            <div id="queueMessage" class="message" aria-live="polite">
+            </div>
 
 
             <!-- ORDER SUMMARY -->
@@ -137,37 +144,60 @@
             </div>
 
 
-            <!-- ORDER QUEUE TABLE -->
+
+            <!-- CUSTOMER ORDER LIST -->
 
             <div class="card">
 
                 <h3>Customer Order List</h3>
 
+
+                <!-- SEARCH AND FILTER -->
+
                 <div class="search-bar">
 
                     <input type="text" id="queueSearch" placeholder="Search by token or customer name..."
-                        onkeyup="renderPreparationQueue()">
+                        oninput="renderPreparationQueue()">
 
 
                     <select id="queueStatusFilter" onchange="renderPreparationQueue()">
 
-                        <option value="All">All Order Status</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Preparing">Preparing</option>
-                        <option value="Ready">Ready</option>
-                        <option value="Completed">Completed</option>
+                        <option value="All">
+                            All Order Status
+                        </option>
+
+                        <option value="Pending">
+                            Pending
+                        </option>
+
+                        <option value="Preparing">
+                            Preparing
+                        </option>
+
+                        <option value="Ready">
+                            Ready
+                        </option>
+
+                        <option value="Completed">
+                            Completed
+                        </option>
 
                     </select>
 
                 </div>
 
 
+
+                <!-- ORDER TABLE -->
+
                 <div class="table-wrapper">
 
                     <table class="data-table">
 
                         <thead>
+
                             <tr>
+
                                 <th>Order ID</th>
                                 <th>Token No.</th>
                                 <th>Customer</th>
@@ -175,7 +205,9 @@
                                 <th>Quantity</th>
                                 <th>Order Time</th>
                                 <th>Order Status</th>
+
                             </tr>
+
                         </thead>
 
                         <tbody id="queueTableBody">
@@ -195,6 +227,7 @@
             </div>
 
 
+
             <!-- UPDATE ORDER STATUS -->
 
             <div class="card">
@@ -209,6 +242,9 @@
 
                         <table class="form-table">
 
+
+                            <!-- ORDER TOKEN -->
+
                             <tr>
 
                                 <td>
@@ -218,12 +254,16 @@
                                 </td>
 
                                 <td>
+
                                     <input type="text" id="queueToken" placeholder="Enter customer order token"
                                         required>
+
                                 </td>
 
                             </tr>
 
+
+                            <!-- NEW ORDER STATUS -->
 
                             <tr>
 
@@ -263,6 +303,7 @@
 
                             </tr>
 
+
                         </table>
 
                     </fieldset>
@@ -272,7 +313,7 @@
 
                         <input type="submit" class="btn" value="Update Order Status">
 
-                        <button type="reset" class="btn btn-secondary" onclick="clearMessage('queueMessage')">
+                        <button type="button" class="btn btn-secondary" onclick="resetQueueForm()">
                             Reset
                         </button>
 
@@ -300,12 +341,15 @@
                 Monitor available ingredients and update stock quantities.
             </p>
 
-            <div id="stockMessage" class="message"></div>
+            <div id="stockMessage" class="message" aria-live="polite">
+            </div>
+
 
 
             <!-- STOCK SUMMARY -->
 
             <div class="stats-grid">
+
 
                 <div class="stat-card">
 
@@ -358,38 +402,59 @@
 
                 </div>
 
+
             </div>
 
 
-            <!-- STOCK LIST -->
+
+            <!-- AVAILABLE STOCK INFORMATION -->
 
             <div class="card">
 
                 <h3>Available Stock Information</h3>
 
+
+                <!-- SEARCH AND FILTER -->
+
                 <div class="search-bar">
 
-                    <input type="text" id="stockSearch" placeholder="Search stock item..." onkeyup="renderStock()">
+                    <input type="text" id="stockSearch" placeholder="Search stock item..." oninput="renderStock()">
 
 
                     <select id="stockStatusFilter" onchange="renderStock()">
 
-                        <option value="All">All Stock Status</option>
-                        <option value="Available">Available</option>
-                        <option value="Low Stock">Low Stock</option>
-                        <option value="Out of Stock">Out of Stock</option>
+                        <option value="All">
+                            All Stock Status
+                        </option>
+
+                        <option value="Available">
+                            Available
+                        </option>
+
+                        <option value="Low Stock">
+                            Low Stock
+                        </option>
+
+                        <option value="Out of Stock">
+                            Out of Stock
+                        </option>
 
                     </select>
 
                 </div>
 
 
+
+                <!-- STOCK TABLE -->
+
                 <div class="table-wrapper">
 
                     <table class="data-table">
 
                         <thead>
+
                             <tr>
+
                                 <th>Stock ID</th>
                                 <th>Item Name</th>
                                 <th>Category</th>
@@ -397,7 +462,9 @@
                                 <th>Unit</th>
                                 <th>Minimum Stock</th>
                                 <th>Status</th>
+
                             </tr>
+
                         </thead>
 
                         <tbody id="stockTableBody">
@@ -417,6 +484,7 @@
             </div>
 
 
+
             <!-- UPDATE STOCK QUANTITY -->
 
             <div class="card">
@@ -430,6 +498,9 @@
                         <legend>Stock Update Information</legend>
 
                         <table class="form-table">
+
+
+                            <!-- SELECT STOCK ITEM -->
 
                             <tr>
 
@@ -454,6 +525,8 @@
                             </tr>
 
 
+                            <!-- NEW QUANTITY -->
+
                             <tr>
 
                                 <td>
@@ -472,6 +545,8 @@
                             </tr>
 
 
+                            <!-- UNIT -->
+
                             <tr>
 
                                 <td>
@@ -488,6 +563,7 @@
 
                             </tr>
 
+
                         </table>
 
                     </fieldset>
@@ -497,7 +573,7 @@
 
                         <input type="submit" class="btn" value="Update Stock">
 
-                        <button type="reset" class="btn btn-secondary" onclick="clearMessage('stockMessage')">
+                        <button type="button" class="btn btn-secondary" onclick="resetStockForm()">
                             Reset
                         </button>
 
@@ -526,12 +602,15 @@
                 and maintain product waste records.
             </p>
 
-            <div id="wasteMessage" class="message"></div>
+            <div id="wasteMessage" class="message" aria-live="polite">
+            </div>
+
 
 
             <!-- WASTE REPORT FORM -->
 
             <div class="row">
+
 
                 <div class="col card">
 
@@ -544,6 +623,9 @@
                             <legend>Product Damage Information</legend>
 
                             <table class="form-table">
+
+
+                                <!-- PRODUCT NAME -->
 
                                 <tr>
 
@@ -568,6 +650,8 @@
                                 </tr>
 
 
+                                <!-- DAMAGED QUANTITY -->
+
                                 <tr>
 
                                     <td>
@@ -586,6 +670,8 @@
                                 </tr>
 
 
+                                <!-- UNIT -->
+
                                 <tr>
 
                                     <td>
@@ -602,6 +688,8 @@
 
                                 </tr>
 
+
+                                <!-- DAMAGE REASON -->
 
                                 <tr>
 
@@ -646,6 +734,8 @@
                                 </tr>
 
 
+                                <!-- ADDITIONAL DETAILS -->
+
                                 <tr>
 
                                     <td>
@@ -656,12 +746,14 @@
 
                                     <td>
 
-                                        <textarea id="wasteDetails"
-                                            placeholder="Describe the problem or damage"></textarea>
+                                        <textarea id="wasteDetails" rows="4"
+                                            placeholder="Describe the problem or damage">
+                                        </textarea>
 
                                     </td>
 
                                 </tr>
+
 
                             </table>
 
@@ -672,7 +764,7 @@
 
                             <input type="submit" class="btn" value="Submit Waste Report">
 
-                            <button type="reset" class="btn btn-secondary" onclick="clearMessage('wasteMessage')">
+                            <button type="button" class="btn btn-secondary" onclick="resetWasteForm()">
                                 Reset
                             </button>
 
@@ -681,6 +773,7 @@
                     </form>
 
                 </div>
+
 
 
                 <!-- REPORTING GUIDELINES -->
@@ -720,7 +813,9 @@
 
                 </div>
 
+
             </div>
+
 
 
             <!-- WASTE REPORT HISTORY -->
@@ -729,32 +824,57 @@
 
                 <h3>Damaged / Expired Product Records</h3>
 
+
+                <!-- SEARCH AND FILTER -->
+
                 <div class="search-bar">
 
                     <input type="text" id="wasteSearch" placeholder="Search product or report..."
-                        onkeyup="renderWasteReports()">
+                        oninput="renderWasteReports()">
 
 
                     <select id="wasteReasonFilter" onchange="renderWasteReports()">
 
-                        <option value="All">All Reasons</option>
-                        <option value="Expired">Expired</option>
-                        <option value="Damaged">Damaged</option>
-                        <option value="Spoiled">Spoiled</option>
-                        <option value="Contaminated">Contaminated</option>
-                        <option value="Other">Other</option>
+                        <option value="All">
+                            All Reasons
+                        </option>
+
+                        <option value="Expired">
+                            Expired
+                        </option>
+
+                        <option value="Damaged">
+                            Damaged
+                        </option>
+
+                        <option value="Spoiled">
+                            Spoiled
+                        </option>
+
+                        <option value="Contaminated">
+                            Contaminated
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
 
                     </select>
 
                 </div>
 
 
+
+                <!-- WASTE REPORT TABLE -->
+
                 <div class="table-wrapper">
 
                     <table class="data-table">
 
                         <thead>
+
                             <tr>
+
                                 <th>Report ID</th>
                                 <th>Product Name</th>
                                 <th>Quantity</th>
@@ -763,7 +883,9 @@
                                 <th>Details</th>
                                 <th>Reported By</th>
                                 <th>Report Date</th>
+
                             </tr>
+
                         </thead>
 
                         <tbody id="wasteTableBody">
@@ -784,7 +906,9 @@
 
         </section>
 
+
     </main>
+
 
 
     <!-- ==================== FOOTER ==================== -->
@@ -802,11 +926,21 @@
     </footer>
 
 
+
     <!-- ==================== JAVASCRIPT FILES ==================== -->
 
+    <!-- Central in-memory data -->
+
     <script src="js/data.js"></script>
+
+    <!-- Shared functions -->
+
     <script src="js/common.js"></script>
+
+    <!-- Barista dashboard functions -->
+
     <script src="js/barista.js"></script>
+
 
 </body>
 

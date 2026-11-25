@@ -1,9 +1,5 @@
 
-/* =========================================================
-   COFFEE CORNER - ADMIN JAVASCRIPT
-   Administrator Dashboard Management
-   Technology: JavaScript + LocalStorage
-   ========================================================= */
+
 
 
 /* ==================== 1. GLOBAL INITIALIZATION ==================== */
@@ -1755,45 +1751,10 @@ function resetStaffForm() {
 }
 
 
-/* ==================== 7. STORAGE EVENT ==================== */
+/* ==================== 7. REFRESH ON WINDOW FOCUS ==================== */
 
-/*
-   Update Admin Dashboard when another browser tab
-   changes menu, orders, reviews, or staff data.
-*/
-
-window.addEventListener("storage", function (event) {
-
-    if (!event.key) {
-        return;
-    }
-
-
-    const refreshKeys = [
-
-        "coffee_corner_orders",
-        "coffee_corner_menu",
-        "coffee_corner_reviews",
-        "coffee_corner_staff",
-        "coffee_corner_users"
-
-    ];
-
-
-    if (refreshKeys.includes(event.key)) {
-
-        renderAnalytics();
-        renderMenu();
-        renderReviews();
-        renderStaff();
-
-    }
-
-});
-
-
-/* ==================== 8. REFRESH ON WINDOW FOCUS ==================== */
-
+/* Refresh visible admin information when the window regains focus.
+   Data is still held only in this page memory; this is not cross-tab sync. */
 window.addEventListener("focus", function () {
 
     renderAnalytics();

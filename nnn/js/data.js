@@ -1,18 +1,12 @@
 
-/* =========================================================
-   COFFEE CORNER - COFFEE SHOP MANAGEMENT SYSTEM
-   Central Data Management File
-   Technology: JavaScript + LocalStorage
-   ========================================================= */
 
 
-/* ==================== 1. STORAGE KEYS ==================== */
+/* ==================== 1. COLLECTIONS ==================== */
 
 var CoffeeData = (function () {
 
-    const STORAGE_PREFIX = "coffee_corner_";
-
     const COLLECTIONS = [
+
         "users",
         "menu",
         "stock",
@@ -23,6 +17,7 @@ var CoffeeData = (function () {
         "reviews",
         "reconciliations",
         "wasteReports"
+
     ];
 
 
@@ -30,7 +25,6 @@ var CoffeeData = (function () {
 
     const DEFAULT_DATA = {
 
-        /* USER ACCOUNTS */
         users: [
 
             {
@@ -85,6 +79,7 @@ var CoffeeData = (function () {
 
 
         /* MENU ITEMS */
+
         menu: [
 
             {
@@ -154,6 +149,7 @@ var CoffeeData = (function () {
 
 
         /* STOCK INFORMATION */
+
         stock: [
 
             {
@@ -214,6 +210,7 @@ var CoffeeData = (function () {
 
 
         /* STAFF INFORMATION */
+
         staff: [
 
             {
@@ -238,142 +235,168 @@ var CoffeeData = (function () {
 
 
         /* CUSTOMER ORDERS */
+
         orders: [],
 
 
         /* CUSTOMER FAVORITES */
+
         favorites: [],
 
 
         /* PAYMENT RECORDS */
+
         payments: [],
 
 
         /* CUSTOMER REVIEWS */
+
         reviews: [],
 
 
         /* DAILY CASH RECONCILIATION */
+
         reconciliations: [],
 
 
-        /* DAMAGED / EXPIRED PRODUCT REPORTS */
+        /* DAMAGED / EXPIRED PRODUCTS */
+
         wasteReports: []
 
     };
 
 
-    /* ==================== 3. STORAGE HELPERS ==================== */
+    /* ==================== 3. IN-MEMORY DATABASE ==================== */
 
-    function storageKey(key) {
-        return STORAGE_PREFIX + key;
+    let database = cloneData(DEFAULT_DATA);
+
+
+    /* ==================== 4. DATA CLONING ==================== */
+
+    function cloneData(source) {
+
+        if (Array.isArray(source)) {
+
+            return source.map(function (item) {
+                return cloneData(item);
+            });
+
+        }
+
+        if (source !== null && typeof source === "object") {
+
+            const copiedObject = {};
+
+            Object.keys(source).forEach(function (key) {
+
+                copiedObject[key] = cloneData(source[key]);
+
+            });
+
+            return copiedObject;
+
+        }
+
+        return source;
+
     }
 
+
+    /* ==================== 5. VALIDATE COLLECTION ==================== */
 
     function isValidCollection(key) {
-        return COLLECTIONS.indexOf(key) !== -1;
+
+        return COLLECTIONS.includes(key);
+
     }
 
+
+    /* ==================== 6. GET DATA ==================== */
 
     function get(key) {
 
         if (!isValidCollection(key)) {
+
             console.error("Invalid CoffeeData collection:", key);
-            return [];
-        }
-
-        try {
-
-            const storedData = localStorage.getItem(storageKey(key));
-
-            if (storedData === null) {
-                return [];
-            }
-
-            const parsedData = JSON.parse(storedData);
-
-            if (!Array.isArray(parsedData)) {
-                console.error("Invalid stored data:", key);
-                return [];
-            }
-
-            return parsedData;
-
-        } catch (error) {
-
-            console.error("Error reading data:", key, error);
 
             return [];
 
         }
+
+        return database[key];
 
     }
 
+
+    /* ==================== 7. SET DATA ==================== */
 
     function set(key, value) {
 
         if (!isValidCollection(key)) {
+
             console.error("Invalid CoffeeData collection:", key);
+
             return false;
+
         }
 
         if (!Array.isArray(value)) {
+
             console.error("Data must be an array:", key);
-            return false;
-        }
-
-        try {
-
-            localStorage.setItem(
-                storageKey(key),
-                JSON.stringify(value)
-            );
-
-            return true;
-
-        } catch (error) {
-
-            console.error("Error saving data:", key, error);
 
             return false;
 
         }
+
+        database[key] = value;
+
+        return true;
 
     }
 
 
-    /* ==================== 4. ID GENERATOR ==================== */
+    /* ==================== 8. GENERATE NEXT ID ==================== */
 
     function nextId(key) {
 
         if (!isValidCollection(key)) {
+
             console.error("Invalid collection for ID:", key);
+
             return 1;
+
         }
 
         const records = get(key);
 
         let maximumId = 0;
 
+
         records.forEach(function (record) {
 
             const currentId = Number(record.id);
 
             if (
+
                 Number.isInteger(currentId) &&
+
                 currentId > maximumId
+
             ) {
+
                 maximumId = currentId;
+
             }
 
         });
+
 
         return maximumId + 1;
 
     }
 
 
-    /* ==================== 5. ORDER TOKEN GENERATOR ==================== */
+    /* ==================== 9. GENERATE ORDER TOKEN ==================== */
 
     function token() {
 
@@ -381,69 +404,60 @@ var CoffeeData = (function () {
 
         let newToken;
 
+
         do {
 
             newToken = "CC" +
+
                 Date.now().toString().slice(-6) +
+
                 Math.floor(100 + Math.random() * 900);
 
-        } while (
+        }
+
+        while (
+
             orders.some(function (order) {
+
                 return String(order.token) === newToken;
+
             })
+
         );
+
 
         return newToken;
 
     }
 
 
-    /* ==================== 6. INITIALIZE DATABASE ==================== */
+    /* ==================== 10. INITIALIZE DATABASE ==================== */
 
     function initialize() {
 
-        COLLECTIONS.forEach(function (key) {
-
-            const currentData = localStorage.getItem(storageKey(key));
-
-            if (currentData === null) {
-
-                localStorage.setItem(
-                    storageKey(key),
-                    JSON.stringify(DEFAULT_DATA[key])
-                );
-
-            }
-
-        });
-
-        console.log("Coffee Corner data initialized successfully.");
+        console.log(
+            "Coffee Corner in-memory database initialized successfully."
+        );
 
     }
 
 
-    /* ==================== 7. RESET DEMO DATA ==================== */
+    /* ==================== 11. RESET DEMO DATA ==================== */
 
     function resetDemoData() {
 
-        COLLECTIONS.forEach(function (key) {
+        database = cloneData(DEFAULT_DATA);
 
-            localStorage.setItem(
-                storageKey(key),
-                JSON.stringify(DEFAULT_DATA[key])
-            );
+        console.log(
+            "Coffee Corner demo data reset successfully."
+        );
 
-        });
-
-        localStorage.removeItem("coffee_current_user");
-        localStorage.removeItem("coffee_current_bill");
-
-        console.log("Coffee Corner demo data reset successfully.");
+        return true;
 
     }
 
 
-    /* ==================== 8. PUBLIC FUNCTIONS ==================== */
+    /* ==================== 12. PUBLIC FUNCTIONS ==================== */
 
     return {
 
@@ -466,6 +480,6 @@ var CoffeeData = (function () {
 })();
 
 
-/* ==================== 9. START APPLICATION ==================== */
+/* ==================== 13. START APPLICATION ==================== */
 
 CoffeeData.initialize();

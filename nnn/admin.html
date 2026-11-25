@@ -79,38 +79,70 @@
             </p>
 
 
-            <!-- Statistics Cards -->
+            <!-- STATISTICS CARDS -->
 
             <div class="stats-grid">
 
                 <div class="stat-card">
-                    <div class="stat-number" id="statSales">৳ 0</div>
-                    <div class="stat-label">Today's Sales</div>
+
+                    <div class="stat-number" id="statSales">
+                        ৳ 0
+                    </div>
+
+                    <div class="stat-label">
+                        Today's Sales
+                    </div>
+
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-number" id="statOrders">0</div>
-                    <div class="stat-label">Today's Orders</div>
-                </div>
 
                 <div class="stat-card">
-                    <div class="stat-number" id="statMenuItems">0</div>
-                    <div class="stat-label">Active Menu Items</div>
+
+                    <div class="stat-number" id="statOrders">
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Today's Orders
+                    </div>
+
                 </div>
 
+
                 <div class="stat-card">
-                    <div class="stat-number" id="statReviews">0</div>
-                    <div class="stat-label">Pending Reviews</div>
+
+                    <div class="stat-number" id="statMenuItems">
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Active Menu Items
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-number" id="statReviews">
+                        0
+                    </div>
+
+                    <div class="stat-label">
+                        Pending Reviews
+                    </div>
+
                 </div>
 
             </div>
 
 
-            <!-- Sales Analysis Tables -->
+            <!-- SALES ANALYSIS TABLES -->
 
             <div class="row">
 
-                <!-- Best Selling Products -->
+
+                <!-- BEST SELLING PRODUCTS -->
 
                 <div class="col card">
 
@@ -121,11 +153,13 @@
                         <table class="data-table">
 
                             <thead>
+
                                 <tr>
                                     <th>Product</th>
                                     <th>Units Sold</th>
                                     <th>Sales</th>
                                 </tr>
+
                             </thead>
 
                             <tbody id="bestSellingTableBody"></tbody>
@@ -137,7 +171,7 @@
                 </div>
 
 
-                <!-- Peak Sales Hours -->
+                <!-- PEAK SALES HOURS -->
 
                 <div class="col card">
 
@@ -148,11 +182,13 @@
                         <table class="data-table">
 
                             <thead>
+
                                 <tr>
                                     <th>Time</th>
                                     <th>Orders</th>
                                     <th>Sales</th>
                                 </tr>
+
                             </thead>
 
                             <tbody id="peakSalesTableBody"></tbody>
@@ -167,7 +203,9 @@
 
 
             <button type="button" class="btn" onclick="generateReport()">
+
                 Refresh Report
+
             </button>
 
         </section>
@@ -178,23 +216,28 @@
 
         <section id="menuSection" class="page-section">
 
-            <h2 class="page-title">Menu Management</h2>
+            <h2 class="page-title">
+                Menu Management
+            </h2>
 
             <p class="page-subtitle">
                 Add, view, edit, delete and search coffee shop menu items.
             </p>
 
-            <div id="menuMessage" class="message"></div>
+            <div id="menuMessage" class="message" aria-live="polite">
+            </div>
 
 
             <div class="row">
 
 
-                <!-- Add / Edit Menu Form -->
+                <!-- ADD / EDIT MENU FORM -->
 
                 <div class="col card">
 
-                    <h3 id="menuFormTitle">Add New Menu Item</h3>
+                    <h3 id="menuFormTitle">
+                        Add New Menu Item
+                    </h3>
 
                     <form id="menuForm" onsubmit="return saveMenuItem()">
 
@@ -204,80 +247,121 @@
 
                             <table class="form-table">
 
+
                                 <tr>
+
                                     <td>
-                                        <label for="itemName">Item Name:</label>
+                                        <label for="itemName">
+                                            Item Name:
+                                        </label>
                                     </td>
 
                                     <td>
+
                                         <input type="text" id="itemName" placeholder="e.g. Cappuccino" maxlength="100"
                                             required>
 
-                                        <span class="error" id="itemNameError"></span>
+                                        <span class="error" id="itemNameError">
+                                        </span>
+
                                     </td>
+
                                 </tr>
 
 
                                 <tr>
+
                                     <td>
-                                        <label for="category">Category:</label>
+                                        <label for="category">
+                                            Category:
+                                        </label>
                                     </td>
 
                                     <td>
+
                                         <select id="category" required>
 
-                                            <option value="">-- Select Category --</option>
+                                            <option value="">
+                                                -- Select Category --
+                                            </option>
+
                                             <option>Hot Coffee</option>
+
                                             <option>Cold Coffee</option>
+
                                             <option>Snacks</option>
 
                                         </select>
 
-                                        <span class="error" id="categoryError"></span>
+                                        <span class="error" id="categoryError">
+                                        </span>
+
                                     </td>
+
                                 </tr>
 
 
                                 <tr>
+
                                     <td>
-                                        <label for="price">Price (Tk):</label>
+                                        <label for="price">
+                                            Price (Tk):
+                                        </label>
                                     </td>
 
                                     <td>
+
                                         <input type="number" id="price" min="1" step="0.01" placeholder="Enter price"
                                             required>
 
-                                        <span class="error" id="priceError"></span>
+                                        <span class="error" id="priceError">
+                                        </span>
+
                                     </td>
+
                                 </tr>
 
 
                                 <tr>
+
                                     <td>
-                                        <label for="availability">Availability:</label>
+                                        <label for="availability">
+                                            Availability:
+                                        </label>
                                     </td>
 
                                     <td>
+
                                         <select id="availability">
 
                                             <option>Available</option>
+
                                             <option>Unavailable</option>
 
                                         </select>
+
                                     </td>
+
                                 </tr>
 
 
                                 <tr>
+
                                     <td>
-                                        <label for="description">Description:</label>
+                                        <label for="description">
+                                            Description:
+                                        </label>
                                     </td>
 
                                     <td>
+
                                         <textarea id="description" placeholder="Enter item description"
                                             maxlength="500"></textarea>
+
                                     </td>
+
                                 </tr>
+
 
                             </table>
 
@@ -286,10 +370,14 @@
 
                         <input type="hidden" id="menuItemId">
 
+
                         <input type="submit" id="menuSaveButton" class="btn" value="Add Menu Item">
 
+
                         <button type="button" class="btn btn-secondary" onclick="resetMenuForm()">
+
                             Cancel
+
                         </button>
 
                     </form>
@@ -298,7 +386,7 @@
 
 
 
-                <!-- Menu List -->
+                <!-- MENU LIST -->
 
                 <div class="col card">
 
@@ -309,11 +397,17 @@
                         <input type="text" id="menuSearch" placeholder="Search by item name or ID..."
                             onkeyup="renderMenuItems()">
 
+
                         <select id="menuCategoryFilter" onchange="renderMenuItems()">
 
-                            <option value="All">All Categories</option>
+                            <option value="All">
+                                All Categories
+                            </option>
+
                             <option>Hot Coffee</option>
+
                             <option>Cold Coffee</option>
+
                             <option>Snacks</option>
 
                         </select>
@@ -321,8 +415,12 @@
 
                         <select id="menuStatusFilter" onchange="renderMenuItems()">
 
-                            <option value="All">All Status</option>
+                            <option value="All">
+                                All Status
+                            </option>
+
                             <option>Available</option>
+
                             <option>Unavailable</option>
 
                         </select>
@@ -332,12 +430,15 @@
 
                     <p class="result-count" id="menuCount"></p>
 
+
                     <div class="table-wrapper">
 
                         <table class="data-table">
 
                             <thead>
+
                                 <tr>
+
                                     <th>Item ID</th>
                                     <th>Item Name</th>
                                     <th>Category</th>
@@ -345,7 +446,9 @@
                                     <th>Description</th>
                                     <th>Status</th>
                                     <th>Actions</th>
+
                                 </tr>
+
                             </thead>
 
                             <tbody id="menuTableBody"></tbody>
@@ -366,16 +469,19 @@
 
         <section id="reviewsSection" class="page-section">
 
-            <h2 class="page-title">Review & Rating Management</h2>
+            <h2 class="page-title">
+                Review & Rating Management
+            </h2>
 
             <p class="page-subtitle">
                 View customer feedback about coffee items, staff and the coffee shop.
             </p>
 
-            <div id="reviewMessage" class="message"></div>
+            <div id="reviewMessage" class="message" aria-live="polite">
+            </div>
 
 
-            <!-- Customer Reviews -->
+            <!-- CUSTOMER REVIEWS -->
 
             <div class="card">
 
@@ -389,11 +495,18 @@
 
                     <select id="ratingFilter" onchange="renderReviews()">
 
-                        <option value="All">All Ratings</option>
+                        <option value="All">
+                            All Ratings
+                        </option>
+
                         <option value="5">5 Stars</option>
+
                         <option value="4">4 Stars</option>
+
                         <option value="3">3 Stars</option>
+
                         <option value="2">2 Stars</option>
+
                         <option value="1">1 Star</option>
 
                     </select>
@@ -401,9 +514,14 @@
 
                     <select id="reviewTypeFilter" onchange="renderReviews()">
 
-                        <option value="All">All Review Types</option>
+                        <option value="All">
+                            All Review Types
+                        </option>
+
                         <option>Coffee Item</option>
+
                         <option>Staff</option>
+
                         <option>Coffee Shop</option>
 
                     </select>
@@ -413,12 +531,15 @@
 
                 <p class="result-count" id="reviewCount"></p>
 
+
                 <div class="table-wrapper">
 
                     <table class="data-table">
 
                         <thead>
+
                             <tr>
+
                                 <th>Review ID</th>
                                 <th>Customer</th>
                                 <th>Review Type</th>
@@ -427,7 +548,9 @@
                                 <th>Date</th>
                                 <th>Status</th>
                                 <th>Action</th>
+
                             </tr>
+
                         </thead>
 
                         <tbody id="reviewTableBody"></tbody>
@@ -440,7 +563,7 @@
 
 
 
-            <!-- Admin Response Form -->
+            <!-- ADMIN RESPONSE FORM -->
 
             <div class="card">
 
@@ -454,31 +577,47 @@
 
                         <table class="form-table">
 
+
                             <tr>
+
                                 <td>
-                                    <label for="responseReviewId">Review ID:</label>
+                                    <label for="responseReviewId">
+                                        Review ID:
+                                    </label>
                                 </td>
 
                                 <td>
+
                                     <input type="text" id="responseReviewId" placeholder="Enter review ID" required>
 
-                                    <span class="error" id="responseReviewIdError"></span>
+                                    <span class="error" id="responseReviewIdError">
+                                    </span>
+
                                 </td>
+
                             </tr>
 
 
                             <tr>
+
                                 <td>
-                                    <label for="adminResponse">Admin Response:</label>
+                                    <label for="adminResponse">
+                                        Admin Response:
+                                    </label>
                                 </td>
 
                                 <td>
+
                                     <textarea id="adminResponse" placeholder="Write your response" maxlength="1000"
                                         required></textarea>
 
-                                    <span class="error" id="adminResponseError"></span>
+                                    <span class="error" id="adminResponseError">
+                                    </span>
+
                                 </td>
+
                             </tr>
+
 
                         </table>
 
@@ -487,8 +626,11 @@
 
                     <input type="submit" class="btn" value="Submit Response">
 
+
                     <button type="button" class="btn btn-secondary" onclick="resetResponseForm()">
+
                         Cancel
+
                     </button>
 
                 </form>
@@ -503,23 +645,28 @@
 
         <section id="staffSection" class="page-section">
 
-            <h2 class="page-title">Staff Account Management</h2>
+            <h2 class="page-title">
+                Staff Account Management
+            </h2>
 
             <p class="page-subtitle">
                 Create, view, edit, delete and search cashier and staff accounts.
             </p>
 
-            <div id="staffMessage" class="message"></div>
+            <div id="staffMessage" class="message" aria-live="polite">
+            </div>
 
 
             <div class="row">
 
 
-                <!-- Staff Form -->
+                <!-- STAFF FORM -->
 
                 <div class="col card">
 
-                    <h3 id="staffFormTitle">Add New Staff</h3>
+                    <h3 id="staffFormTitle">
+                        Add New Staff
+                    </h3>
 
                     <form id="staffForm" onsubmit="return saveStaff()">
 
@@ -529,68 +676,102 @@
 
                             <table class="form-table">
 
+
                                 <tr>
+
                                     <td>
-                                        <label for="staffName">Full Name:</label>
+                                        <label for="staffName">
+                                            Full Name:
+                                        </label>
                                     </td>
 
                                     <td>
+
                                         <input type="text" id="staffName" placeholder="Enter staff name" maxlength="100"
                                             required>
 
-                                        <span class="error" id="staffNameError"></span>
+                                        <span class="error" id="staffNameError">
+                                        </span>
+
                                     </td>
+
                                 </tr>
 
 
                                 <tr>
+
                                     <td>
-                                        <label for="staffEmail">Email:</label>
+                                        <label for="staffEmail">
+                                            Email:
+                                        </label>
                                     </td>
 
                                     <td>
+
                                         <input type="email" id="staffEmail" placeholder="Enter email address"
                                             maxlength="150" required>
 
-                                        <span class="error" id="staffEmailError"></span>
+                                        <span class="error" id="staffEmailError">
+                                        </span>
+
                                     </td>
+
                                 </tr>
 
 
                                 <tr>
+
                                     <td>
-                                        <label for="staffRole">Role:</label>
+                                        <label for="staffRole">
+                                            Role:
+                                        </label>
                                     </td>
 
                                     <td>
+
                                         <select id="staffRole" required>
 
-                                            <option value="">-- Select Role --</option>
+                                            <option value="">
+                                                -- Select Role --
+                                            </option>
+
                                             <option>Cashier</option>
+
                                             <option>Staff</option>
 
                                         </select>
 
-                                        <span class="error" id="staffRoleError"></span>
+                                        <span class="error" id="staffRoleError">
+                                        </span>
+
                                     </td>
+
                                 </tr>
 
 
                                 <tr>
+
                                     <td>
-                                        <label for="staffPassword">Password:</label>
+                                        <label for="staffPassword">
+                                            Password:
+                                        </label>
                                     </td>
 
                                     <td>
+
                                         <input type="password" id="staffPassword" placeholder="Enter password"
                                             minlength="6">
 
-                                        <span class="error" id="staffPasswordError"></span>
+                                        <span class="error" id="staffPasswordError">
+                                        </span>
+
                                     </td>
+
                                 </tr>
 
 
                                 <tr>
+
                                     <td>Status:</td>
 
                                     <td>
@@ -609,7 +790,9 @@
                                         </label>
 
                                     </td>
+
                                 </tr>
+
 
                             </table>
 
@@ -618,10 +801,14 @@
 
                         <input type="hidden" id="staffId">
 
+
                         <input type="submit" id="staffSaveButton" class="btn" value="Add Staff">
 
+
                         <button type="button" class="btn btn-secondary" onclick="resetStaffForm()">
+
                             Cancel
+
                         </button>
 
                     </form>
@@ -630,7 +817,7 @@
 
 
 
-                <!-- Staff List -->
+                <!-- STAFF LIST -->
 
                 <div class="col card">
 
@@ -644,21 +831,36 @@
 
                         <select id="staffRoleFilter" onchange="renderStaff()">
 
-                            <option value="All">All Roles</option>
+                            <option value="All">
+                                All Roles
+                            </option>
+
                             <option>Cashier</option>
+
                             <option>Staff</option>
 
                         </select>
 
 
-                        <!-- UPDATED STAFF STATUS FILTER -->
+                        <!-- STAFF STATUS FILTER -->
 
                         <select id="staffStatusFilter" onchange="renderStaff()">
 
-                            <option value="All">Any Status</option>
-                            <option value="Pending">Pending Approval</option>
-                            <option value="Active">Active</option>
-                            <option value="Blocked">Blocked</option>
+                            <option value="All">
+                                Any Status
+                            </option>
+
+                            <option value="Pending">
+                                Pending Approval
+                            </option>
+
+                            <option value="Active">
+                                Active
+                            </option>
+
+                            <option value="Blocked">
+                                Blocked
+                            </option>
 
                         </select>
 
@@ -667,19 +869,24 @@
 
                     <p class="result-count" id="staffCount"></p>
 
+
                     <div class="table-wrapper">
 
                         <table class="data-table">
 
                             <thead>
+
                                 <tr>
+
                                     <th>Staff ID</th>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Role</th>
                                     <th>Status</th>
                                     <th>Actions</th>
+
                                 </tr>
+
                             </thead>
 
                             <tbody id="staffTableBody"></tbody>
@@ -697,6 +904,7 @@
     </main>
 
 
+
     <!-- ==================== FOOTER ==================== -->
 
     <footer class="footer">
@@ -712,11 +920,21 @@
     </footer>
 
 
+
     <!-- ==================== JAVASCRIPT FILES ==================== -->
 
+    <!-- In-memory application data -->
+
     <script src="js/data.js"></script>
+
+    <!-- Shared functions and role verification -->
+
     <script src="js/common.js"></script>
+
+    <!-- Administrator dashboard functions -->
+
     <script src="js/admin.js"></script>
+
 
 </body>
 

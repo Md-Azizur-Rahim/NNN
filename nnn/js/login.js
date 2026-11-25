@@ -1,26 +1,60 @@
 
-/* =====================================================
-   COFFEE CORNER MANAGEMENT SYSTEM
-   LOGIN JAVASCRIPT
-   ===================================================== */
 
 
-/* =====================================================
-   1. GET HTML ELEMENT
-   ===================================================== */
+/* ==================== 1. GET HTML ELEMENT ==================== */
 
 function getLoginElement(id) {
+
     return document.getElementById(id);
+
 }
 
 
-/* =====================================================
-   2. CLEAR LOGIN ERRORS
-   ===================================================== */
+/* ==================== 2. PREDEFINED DEMO ACCOUNTS ==================== */
+
+const DEMO_ACCOUNTS = [
+
+    {
+        id: 1,
+        username: "admin",
+        email: "admin@coffeecorner.com",
+        password: "admin123",
+        role: "Administrator"
+    },
+
+    {
+        id: 2,
+        username: "customer",
+        email: "customer@coffeecorner.com",
+        password: "customer123",
+        role: "Customer"
+    },
+
+    {
+        id: 3,
+        username: "cashier",
+        email: "cashier@coffeecorner.com",
+        password: "cashier123",
+        role: "Cashier"
+    },
+
+    {
+        id: 4,
+        username: "barista",
+        email: "barista@coffeecorner.com",
+        password: "barista123",
+        role: "Staff"
+    }
+
+];
+
+
+/* ==================== 3. CLEAR LOGIN ERRORS ==================== */
 
 function clearLoginErrors() {
 
     const usernameError = getLoginElement("usernameError");
+
     const passwordError = getLoginElement("passwordError");
 
     if (usernameError) {
@@ -34,17 +68,18 @@ function clearLoginErrors() {
 }
 
 
-/* =====================================================
-   3. CLEAR LOGIN MESSAGE
-   ===================================================== */
+/* ==================== 4. CLEAR LOGIN MESSAGE ==================== */
 
 function clearLoginMessage() {
 
     const loginMessage = getLoginElement("loginMessage");
 
     if (loginMessage) {
+
         loginMessage.textContent = "";
+
         loginMessage.className = "message";
+
     }
 
     clearLoginErrors();
@@ -52,9 +87,7 @@ function clearLoginMessage() {
 }
 
 
-/* =====================================================
-   4. SHOW LOGIN MESSAGE
-   ===================================================== */
+/* ==================== 5. SHOW LOGIN MESSAGE ==================== */
 
 function showLoginMessage(message, type) {
 
@@ -66,67 +99,67 @@ function showLoginMessage(message, type) {
 
     loginMessage.textContent = message;
 
-    loginMessage.className = "message " + (type || "error");
+    loginMessage.className = "message";
+
+    if (type === "success") {
+
+        loginMessage.classList.add("success");
+
+    } else {
+
+        loginMessage.classList.add("error-message");
+
+    }
 
 }
 
 
-/* =====================================================
-   5. SHOW FIELD ERROR
-   ===================================================== */
+/* ==================== 6. SHOW FIELD ERROR ==================== */
 
 function showLoginFieldError(fieldId, message) {
 
     const errorElement = getLoginElement(fieldId + "Error");
 
     if (errorElement) {
+
         errorElement.textContent = message;
+
     }
 
 }
 
 
-/* =====================================================
-   6. FILL DEMO LOGIN CREDENTIALS
-   ===================================================== */
+/* ==================== 7. FILL DEMO LOGIN CREDENTIALS ==================== */
 
 function fillDemo(username, password) {
 
     const usernameInput = getLoginElement("username");
+
     const passwordInput = getLoginElement("password");
 
     if (!usernameInput || !passwordInput) {
         return;
     }
 
-    // Automatically fill username
     usernameInput.value = username;
 
-    // Automatically fill password
     passwordInput.value = password;
 
-    // Clear previous errors
-    clearLoginErrors();
-
-    // Clear previous login message
     clearLoginMessage();
 
-    // Focus on login button
     usernameInput.focus();
 
 }
 
 
-/* =====================================================
-   7. VALIDATE LOGIN INPUT
-   ===================================================== */
+/* ==================== 8. VALIDATE LOGIN INPUT ==================== */
 
 function validateLoginInput(username, password) {
 
     let isValid = true;
 
-    clearLoginErrors();
     clearLoginMessage();
+
 
     if (!username) {
 
@@ -138,6 +171,7 @@ function validateLoginInput(username, password) {
         isValid = false;
 
     }
+
 
     if (!password) {
 
@@ -155,43 +189,92 @@ function validateLoginInput(username, password) {
 }
 
 
-/* =====================================================
-   8. FIND USER ACCOUNT
-   ===================================================== */
+/* ==================== 9. FIND DEMO ACCOUNT ==================== */
 
 function findLoginUser(username) {
 
-    // Get all registered users from CoffeeData
-    const users = CoffeeData.get("users") || [];
+    const loginValue = String(username)
+        .trim()
+        .toLowerCase();
 
-    const loginValue = String(username).trim().toLowerCase();
 
-    // Find account using username or email
-    const user = users.find(function (account) {
+    // Search only predefined demo accounts.
 
-        const accountUsername = String(
-            account.username || ""
-        ).trim().toLowerCase();
-
-        const accountEmail = String(
-            account.email || ""
-        ).trim().toLowerCase();
+    const demoAccount = DEMO_ACCOUNTS.find(function (account) {
 
         return (
-            accountUsername === loginValue ||
-            accountEmail === loginValue
+
+            account.username.toLowerCase() === loginValue ||
+
+            account.email.toLowerCase() === loginValue
+
         );
 
     });
 
-    return user || null;
+
+    if (!demoAccount) {
+        return null;
+    }
+
+
+    // Verify the account exists in the in-memory database.
+
+    if (
+        typeof CoffeeData === "undefined" ||
+        typeof CoffeeData.get !== "function"
+    ) {
+
+        return null;
+
+    }
+
+
+    const users = CoffeeData.get("users");
+
+
+    const databaseUser = users.find(function (user) {
+
+        return (
+
+            Number(user.id) === demoAccount.id &&
+
+            user.username === demoAccount.username &&
+
+            user.role === demoAccount.role
+
+        );
+
+    });
+
+
+    if (!databaseUser) {
+        return null;
+    }
+
+
+    return {
+
+        id: databaseUser.id,
+
+        name: databaseUser.name,
+
+        username: databaseUser.username,
+
+        email: databaseUser.email,
+
+        role: databaseUser.role,
+
+        status: databaseUser.status,
+
+        password: databaseUser.password
+
+    };
 
 }
 
 
-/* =====================================================
-   9. CHECK ACCOUNT STATUS
-   ===================================================== */
+/* ==================== 10. CHECK ACCOUNT STATUS ==================== */
 
 function isAccountActive(user) {
 
@@ -199,45 +282,83 @@ function isAccountActive(user) {
         return false;
     }
 
-    const status = String(
-        user.status || "Active"
-    ).toLowerCase();
-
-    return status === "active";
+    return String(user.status).toLowerCase() === "active";
 
 }
 
 
-/* =====================================================
-   10. LOGIN USER
-   ===================================================== */
+/* ==================== 11. VERIFY DEMO PASSWORD ==================== */
+
+function verifyDemoPassword(user, password) {
+
+    if (!user) {
+        return false;
+    }
+
+
+    const demoAccount = DEMO_ACCOUNTS.find(function (account) {
+
+        return Number(account.id) === Number(user.id);
+
+    });
+
+
+    if (!demoAccount) {
+        return false;
+    }
+
+
+    // Both predefined password and database password must match.
+
+    return (
+
+        demoAccount.password === password &&
+
+        user.password === password
+
+    );
+
+}
+
+
+/* ==================== 12. LOGIN USER ==================== */
 
 function loginUser() {
 
-    // Get input values
     const usernameInput = getLoginElement("username");
+
     const passwordInput = getLoginElement("password");
+
 
     if (!usernameInput || !passwordInput) {
         return false;
     }
 
+
     const username = usernameInput.value.trim();
+
     const password = passwordInput.value;
 
-    // Validate empty fields
+
+    // Step 1: Validate inputs.
+
     if (!validateLoginInput(username, password)) {
         return false;
     }
 
-    // Check CoffeeData availability
+
+    // Step 2: Check database availability.
+
     if (
+
         typeof CoffeeData === "undefined" ||
+
         typeof CoffeeData.get !== "function"
+
     ) {
 
         showLoginMessage(
-            "System data is not available. Please refresh the page.",
+            "System data is unavailable. Please refresh the page.",
             "error"
         );
 
@@ -245,14 +366,16 @@ function loginUser() {
 
     }
 
-    // Find user account
+
+    // Step 3: Find predefined demo account.
+
     const user = findLoginUser(username);
 
-    // Check account existence
+
     if (!user) {
 
         showLoginMessage(
-            "Invalid username or password. Please try again.",
+            "Invalid username or password. Registered accounts cannot login.",
             "error"
         );
 
@@ -260,8 +383,10 @@ function loginUser() {
 
     }
 
-    // Check password
-    if (String(user.password) !== password) {
+
+    // Step 4: Verify password.
+
+    if (!verifyDemoPassword(user, password)) {
 
         showLoginMessage(
             "Invalid username or password. Please try again.",
@@ -272,11 +397,13 @@ function loginUser() {
 
     }
 
-    // Check account status
+
+    // Step 5: Check account status.
+
     if (!isAccountActive(user)) {
 
         showLoginMessage(
-            "Your account is inactive or blocked. Please contact the administrator.",
+            "Your account is inactive or blocked.",
             "error"
         );
 
@@ -284,11 +411,13 @@ function loginUser() {
 
     }
 
-    // Check role
+
+    // Step 6: Check user role.
+
     if (!user.role) {
 
         showLoginMessage(
-            "Your account does not have a valid role.",
+            "Invalid user role. Please contact administrator.",
             "error"
         );
 
@@ -296,26 +425,28 @@ function loginUser() {
 
     }
 
-    // Save logged-in user information
-    if (
-        typeof setCurrentUser !== "function"
-    ) {
+
+    // Step 7: Set temporary login user.
+
+    if (typeof setCurrentUser !== "function") {
 
         showLoginMessage(
-            "Login session could not be created. Please try again.",
+            "Login session function is unavailable.",
             "error"
         );
 
         return false;
 
     }
+
 
     const loginSuccess = setCurrentUser(user);
 
-    if (loginSuccess === false) {
+
+    if (!loginSuccess) {
 
         showLoginMessage(
-            "Unable to save login session. Please try again.",
+            "Unable to initialize login session.",
             "error"
         );
 
@@ -323,73 +454,80 @@ function loginUser() {
 
     }
 
-    // Redirect to role-based dashboard
-    if (
-        typeof redirectToDashboard === "function"
-    ) {
+
+    // Step 8: Redirect to appropriate dashboard.
+
+    if (typeof redirectToDashboard === "function") {
+
+        showLoginMessage(
+            "Login successful! Redirecting...",
+            "success"
+        );
 
         redirectToDashboard(user.role);
 
     } else {
 
         showLoginMessage(
-            "Dashboard redirection function is not available.",
+            "Dashboard redirection is unavailable.",
             "error"
         );
 
     }
+
 
     return false;
 
 }
 
 
-/* =====================================================
-   11. SHOW / HIDE PASSWORD
-   Optional functionality
-   ===================================================== */
+/* ==================== 13. SHOW / HIDE PASSWORD ==================== */
 
 function togglePassword() {
 
     const passwordInput = getLoginElement("password");
+
     const showPassword = getLoginElement("showPassword");
+
 
     if (!passwordInput || !showPassword) {
         return;
     }
 
+
     passwordInput.type = showPassword.checked
+
         ? "text"
+
         : "password";
 
 }
 
 
-/* =====================================================
-   12. CLEAR MESSAGE WHEN USER STARTS TYPING
-   ===================================================== */
+/* ==================== 14. INITIALIZE LOGIN PAGE ==================== */
 
 document.addEventListener("DOMContentLoaded", function () {
 
     const usernameInput = getLoginElement("username");
+
     const passwordInput = getLoginElement("password");
+
 
     if (usernameInput) {
 
         usernameInput.addEventListener("input", function () {
 
-            clearLoginErrors();
             clearLoginMessage();
 
         });
 
     }
 
+
     if (passwordInput) {
 
         passwordInput.addEventListener("input", function () {
 
-            clearLoginErrors();
             clearLoginMessage();
 
         });
@@ -397,3 +535,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 });
+
+
+/* ==================== END OF LOGIN JAVASCRIPT ==================== */

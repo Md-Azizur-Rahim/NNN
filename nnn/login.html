@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Login to Coffee Corner Management System">
+
     <title>Login | Coffee Corner</title>
 
     <link rel="stylesheet" href="css/style.css">
@@ -12,7 +13,8 @@
 
 <body>
 
-    <!-- ============ HEADER ============ -->
+    <!-- ==================== HEADER ==================== -->
+
     <header class="header">
 
         <a href="index.html" class="logo">
@@ -28,27 +30,38 @@
     </header>
 
 
-    <!-- ============ MAIN CONTAINER ============ -->
+    <!-- ==================== MAIN CONTAINER ==================== -->
+
     <main class="container">
 
         <section class="page-section active">
 
-            <h2 class="page-title">Login to Coffee Corner</h2>
+            <h2 class="page-title">
+                Login to Coffee Corner
+            </h2>
 
             <p class="page-subtitle">
-                Welcome back! Please enter your account information
-                to access your dashboard.
+                Enter your predefined demo credentials
+                to access the appropriate dashboard.
             </p>
 
 
-            <!-- ============ LOGIN FORM ============ -->
+            <!-- ==================== LOGIN CARD ==================== -->
+
             <div class="card" style="max-width: 500px; margin: 30px auto;">
 
                 <h3>Account Login</h3>
 
-                <div id="loginMessage" class="message"></div>
 
-                <form id="loginForm" onsubmit="return loginUser()">
+                <!-- LOGIN MESSAGE -->
+
+                <div id="loginMessage" class="message" aria-live="polite">
+                </div>
+
+
+                <!-- ==================== LOGIN FORM ==================== -->
+
+                <form id="loginForm" onsubmit="return loginUser()" novalidate>
 
                     <fieldset>
 
@@ -56,45 +69,86 @@
 
                         <table class="form-table">
 
+                            <!-- USERNAME -->
+
                             <tr>
+
                                 <td>
-                                    <label for="username">Username:</label>
+                                    <label for="username">
+                                        Username:
+                                    </label>
                                 </td>
 
                                 <td>
+
                                     <input type="text" id="username" name="username" placeholder="Enter your username"
-                                        autocomplete="username" required>
+                                        autocomplete="username">
 
-                                    <span class="error" id="usernameError"></span>
+                                    <span class="error" id="usernameError">
+                                    </span>
+
                                 </td>
+
                             </tr>
 
 
+                            <!-- PASSWORD -->
+
                             <tr>
+
                                 <td>
-                                    <label for="password">Password:</label>
+                                    <label for="password">
+                                        Password:
+                                    </label>
                                 </td>
 
                                 <td>
+
                                     <input type="password" id="password" name="password"
-                                        placeholder="Enter your password" autocomplete="current-password" required>
+                                        placeholder="Enter your password" autocomplete="current-password">
 
-                                    <span class="error" id="passwordError"></span>
+                                    <span class="error" id="passwordError">
+                                    </span>
+
                                 </td>
+
                             </tr>
 
                         </table>
+
+
+                        <!-- SHOW PASSWORD -->
+
+                        <p style="margin-top: 10px;">
+
+                            <input type="checkbox" id="showPassword" onchange="togglePassword()">
+
+                            <label for="showPassword" class="option-label">
+
+                                Show Password
+
+                            </label>
+
+                        </p>
 
                     </fieldset>
 
 
                     <!-- LOGIN BUTTONS -->
+
                     <div class="form-actions">
 
-                        <input type="submit" class="btn" value="Login">
+                        <button type="submit" class="btn">
+
+                            Login
+
+                        </button>
+
 
                         <button type="reset" class="btn btn-secondary" onclick="clearLoginMessage()">
+
                             Reset
+
                         </button>
 
                     </div>
@@ -102,31 +156,43 @@
                 </form>
 
 
-                <!-- ============ DEMO LOGIN CREDENTIALS ============ -->
+                <!-- ==================== DEMO CREDENTIALS ==================== -->
+
                 <div class="card" style="margin-top: 20px;">
 
                     <h3>Demo Login Credentials</h3>
 
                     <p class="hint">
-                        Click the "Use" button to fill in the login form automatically.
+                        Select your role and click the Use button
+                        to automatically fill in the login form.
                     </p>
+
 
                     <div class="table-wrapper">
 
                         <table class="data-table">
 
                             <thead>
+
                                 <tr>
+
                                     <th>Actor</th>
+
                                     <th>Username / Password</th>
+
                                     <th>Action</th>
+
                                 </tr>
+
                             </thead>
+
 
                             <tbody>
 
                                 <!-- CUSTOMER -->
+
                                 <tr>
+
                                     <td>Customer</td>
 
                                     <td>
@@ -134,16 +200,23 @@
                                     </td>
 
                                     <td>
+
                                         <button type="button" class="btn btn-small"
                                             onclick="fillDemo('customer', 'customer123')">
+
                                             Use
+
                                         </button>
+
                                     </td>
+
                                 </tr>
 
 
                                 <!-- CASHIER -->
+
                                 <tr>
+
                                     <td>Cashier</td>
 
                                     <td>
@@ -151,16 +224,23 @@
                                     </td>
 
                                     <td>
+
                                         <button type="button" class="btn btn-small"
                                             onclick="fillDemo('cashier', 'cashier123')">
+
                                             Use
+
                                         </button>
+
                                     </td>
+
                                 </tr>
 
 
                                 <!-- STAFF / BARISTA -->
+
                                 <tr>
+
                                     <td>Staff / Barista</td>
 
                                     <td>
@@ -168,16 +248,23 @@
                                     </td>
 
                                     <td>
+
                                         <button type="button" class="btn btn-small"
                                             onclick="fillDemo('barista', 'barista123')">
+
                                             Use
+
                                         </button>
+
                                     </td>
+
                                 </tr>
 
 
                                 <!-- ADMINISTRATOR -->
+
                                 <tr>
+
                                     <td>Administrator</td>
 
                                     <td>
@@ -185,11 +272,16 @@
                                     </td>
 
                                     <td>
+
                                         <button type="button" class="btn btn-small"
                                             onclick="fillDemo('admin', 'admin123')">
+
                                             Use
+
                                         </button>
+
                                     </td>
+
                                 </tr>
 
                             </tbody>
@@ -198,21 +290,32 @@
 
                     </div>
 
+
                     <p class="hint">
-                        These are sample demo credentials for testing the Coffee Corner system.
+                        These predefined credentials are provided
+                        only for demonstration and testing purposes.
                     </p>
 
                 </div>
 
 
-                <!-- REGISTER LINK -->
+                <!-- REGISTRATION LINK -->
+
                 <p style="text-align: center; margin-top: 20px;">
 
-                    Don't have an account?
+                    Want to submit a demo registration form?
 
                     <a href="register.html">
                         Register Here
                     </a>
+
+                </p>
+
+                <p class="hint" style="text-align: center;">
+
+                    Registration submissions do not create
+                    login accounts. Only predefined demo
+                    credentials can access the dashboards.
 
                 </p>
 
@@ -223,19 +326,35 @@
     </main>
 
 
-    <!-- ============ FOOTER ============ -->
+    <!-- ==================== FOOTER ==================== -->
+
     <footer class="footer">
 
-        &copy; 2026 Coffee Corner &middot;
-        Coffee Shop Management System
+        <p>
+            &copy; 2026 Coffee Corner. All Rights Reserved.
+        </p>
+
+        <p>
+            Coffee Shop Management System
+        </p>
 
     </footer>
 
 
-    <!-- ============ JAVASCRIPT FILES ============ -->
+    <!-- ==================== JAVASCRIPT FILES ==================== -->
+
+    <!-- In-memory demo data -->
+
     <script src="js/data.js"></script>
+
+    <!-- Common dashboard and login functions -->
+
     <script src="js/common.js"></script>
+
+    <!-- Login validation and authentication -->
+
     <script src="js/login.js"></script>
+
 
 </body>
 

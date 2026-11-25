@@ -4,18 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Register for Coffee Corner">
+    <meta name="description" content="Submit a demo registration form for Coffee Corner">
+
     <title>Register | Coffee Corner</title>
 
     <link rel="stylesheet" href="css/style.css">
-
-
-
 </head>
 
 <body>
 
-    <!-- HEADER -->
+    <!-- ==================== HEADER ==================== -->
 
     <header class="header">
 
@@ -38,7 +36,7 @@
     </header>
 
 
-    <!-- MAIN CONTAINER -->
+    <!-- ==================== MAIN CONTAINER ==================== -->
 
     <main class="container">
 
@@ -47,18 +45,23 @@
             <div class="card" style="max-width: 800px; margin: 30px auto;">
 
                 <h2 class="page-title">
-                    Create Your Account
+                    Registration Form Submission
                 </h2>
 
                 <p class="page-subtitle">
-                    Join Coffee Corner. Select your account type
-                    and complete the registration form.
+                    Select your role and complete the form.
+                    This is a demonstration only; submitting this
+                    form will not create or activate a login account.
                 </p>
 
+
+                <!-- REGISTRATION MESSAGE -->
 
                 <div id="registerMessage" class="message" aria-live="polite">
                 </div>
 
+
+                <!-- REGISTRATION FORM -->
 
                 <form id="registerForm" onsubmit="return registerAccount()" novalidate>
 
@@ -129,12 +132,16 @@
                         <span class="error" id="userTypeError"></span>
 
                         <p class="hint">
-                            Cashier and Staff accounts require
-                            Administrator approval.
+                            Demo only: submitting this form does not
+                            create an account, grant dashboard access,
+                            or send an approval request.
+
+                            You can submit up to 3 forms during this
+                            page visit. Refreshing the page resets
+                            the count.
                         </p>
 
                     </fieldset>
-
 
 
                     <!-- FORM BODY -->
@@ -142,7 +149,7 @@
                     <div id="formBody" class="form-body">
 
 
-                        <!-- STEP 2: COMMON INFORMATION -->
+                        <!-- STEP 2: PERSONAL INFORMATION -->
 
                         <fieldset>
 
@@ -240,7 +247,6 @@
                         </fieldset>
 
 
-
                         <!-- STEP 3A: CUSTOMER DETAILS -->
 
                         <fieldset id="customerFields" class="type-fields" disabled>
@@ -336,7 +342,6 @@
                         </fieldset>
 
 
-
                         <!-- STEP 3B: CASHIER DETAILS -->
 
                         <fieldset id="cashierFields" class="type-fields" disabled>
@@ -406,12 +411,12 @@
                             </table>
 
                             <p class="hint">
-                                Your cashier application will be
-                                reviewed by the Administrator.
+                                Cashier details are collected for this
+                                demonstration only. No account or
+                                approval request will be created.
                             </p>
 
                         </fieldset>
-
 
 
                         <!-- STEP 3C: BARISTA / STAFF DETAILS -->
@@ -498,6 +503,7 @@
 
                                         <br>
 
+
                                         <input type="checkbox" id="skillLatte" name="baristaSkills" value="Latte Art">
 
                                         <label for="skillLatte" class="option-label">
@@ -505,6 +511,7 @@
                                         </label>
 
                                         <br>
+
 
                                         <input type="checkbox" id="skillBrewing" name="baristaSkills"
                                             value="Coffee Brewing">
@@ -514,6 +521,7 @@
                                         </label>
 
                                         <br>
+
 
                                         <input type="checkbox" id="skillMachine" name="baristaSkills"
                                             value="Machine Operation">
@@ -529,21 +537,27 @@
                             </table>
 
                             <p class="hint">
-                                Your Staff / Barista application
-                                requires Administrator approval.
+                                Staff details are collected for this
+                                demonstration only. No account or
+                                approval request will be created.
                             </p>
 
                         </fieldset>
 
 
-
-                        <!-- STEP 4: ACCOUNT INFORMATION -->
+                        <!-- STEP 4: DEMO LOGIN DETAILS - NOT SAVED -->
 
                         <fieldset>
 
                             <legend>
-                                Step 4 · Account Information
+                                Step 4 · Demo Login Details (Not Activated)
                             </legend>
+
+                            <p class="hint">
+                                Username and password are checked only
+                                as form inputs. They are not saved,
+                                registered, or accepted by the login system.
+                            </p>
 
                             <table class="form-table">
 
@@ -558,7 +572,7 @@
                                     <td>
 
                                         <input type="text" id="newUsername" name="username"
-                                            placeholder="Choose a username" autocomplete="username">
+                                            placeholder="Choose a demo username" autocomplete="username">
 
                                         <span class="error" id="usernameError">
                                         </span>
@@ -579,7 +593,7 @@
                                     <td>
 
                                         <input type="password" id="newPassword" name="password"
-                                            placeholder="At least 6 characters" autocomplete="new-password">
+                                            placeholder="At least 6 characters (demo only)" autocomplete="new-password">
 
                                         <span class="error" id="passwordError">
                                         </span>
@@ -614,7 +628,6 @@
                         </fieldset>
 
 
-
                         <!-- TERMS AND CONDITIONS -->
 
                         <p>
@@ -622,7 +635,10 @@
                             <input type="checkbox" id="terms" name="terms" onchange="toggleRegisterButton()">
 
                             <label for="terms" class="option-label">
-                                I agree to the Coffee Corner rules and terms *
+
+                                I understand this is a demo submission
+                                and no login account will be created *
+
                             </label>
 
                             <span class="error" id="termsError"></span>
@@ -630,12 +646,12 @@
                         </p>
 
 
-
-                        <!-- REGISTRATION BUTTONS -->
+                        <!-- DEMO REGISTRATION SUBMISSION BUTTONS -->
 
                         <div class="form-buttons">
 
-                            <input type="submit" id="registerButton" class="btn" value="Create Account" disabled>
+                            <input type="submit" id="registerButton" class="btn" value="Submit Registration" disabled>
+
 
                             <button type="button" class="btn btn-secondary" onclick="resetRegisterForm()">
 
@@ -650,9 +666,11 @@
                 </form>
 
 
+                <!-- LOGIN LINK -->
+
                 <p class="auth-switch" style="text-align:center; margin-top:20px;">
 
-                    Already have an account?
+                    Already have demo login credentials?
 
                     <a href="login.html">
                         Login Here
@@ -667,8 +685,7 @@
     </main>
 
 
-
-    <!-- FOOTER -->
+    <!-- ==================== FOOTER ==================== -->
 
     <footer class="footer">
 
@@ -683,11 +700,15 @@
     </footer>
 
 
+    <!-- ==================== JAVASCRIPT FILE ==================== -->
 
-    <!-- JAVASCRIPT FILES -->
+    <!-- Only register.js is loaded.
+         No data.js
+         No common.js
+         No LocalStorage
+         No SessionStorage
+         No JSON -->
 
-    <script src="js/data.js"></script>
-    <script src="js/common.js"></script>
     <script src="js/register.js"></script>
 
 </body>

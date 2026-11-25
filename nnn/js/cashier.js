@@ -1,22 +1,18 @@
 
-/* =========================================================
-   COFFEE CORNER
-   CASHIER DASHBOARD JAVASCRIPT
-   Technology: JavaScript + LocalStorage
-   Programming Style: Procedural JavaScript
-   ========================================================= */
 
 
-/* =========================================================
-   1. INITIALIZATION
-   ========================================================= */
+/* ==================== 1. INITIALIZATION ==================== */
+
+// Temporary bill information.
+// It will be cleared when the page is refreshed.
+
+let currentBill = null;
+
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    if (typeof requireRole === "function") {
-        if (!requireRole("Cashier")) {
-            return;
-        }
+    if (!requireRole("Cashier")) {
+        return;
     }
 
     const reconDate = document.getElementById("reconDate");
@@ -25,7 +21,6 @@ document.addEventListener("DOMContentLoaded", function () {
         reconDate.value = getCurrentDate();
     }
 
-    
     renderPayments();
     updateSystemCash();
     renderReconciliations();
@@ -34,9 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-/* =========================================================
-   2. COMMON DATA HELPERS
-   ========================================================= */
+/* ==================== 2. COMMON DATA HELPERS ==================== */
 
 function getCashierCollection(key) {
 
@@ -89,7 +82,9 @@ function getOrderSubtotal(order) {
             !Number.isFinite(unitPrice) ||
             unitPrice < 0
         ) {
+
             return null;
+
         }
 
         subtotal += quantity * unitPrice;
@@ -122,44 +117,62 @@ function getMoneyInPaisa(amount) {
 function refreshCashierDashboard() {
 
     renderPayments();
+
     renderReconciliations();
+
     updateSystemCash();
+
     updateCashierStatistics();
 
 }
 
 
-/* =========================================================
-   3. BILL CALCULATION
-   ========================================================= */
+/* ==================== 3. BILL CALCULATION ==================== */
 
 function calculateBill(forceUpdate = false) {
 
     if (forceUpdate !== true) {
         return null;
     }
+
     const subtotalInput = document.getElementById("subtotal");
+
     const discountInput = document.getElementById("discount");
+
     const taxInput = document.getElementById("tax");
+
     const receivedInput = document.getElementById("received");
+
 
     if (!subtotalInput || !discountInput || !taxInput || !receivedInput) {
         return null;
     }
 
+
     const subtotal = Number(subtotalInput.value) || 0;
+
     const discount = Number(discountInput.value) || 0;
+
     const tax = Number(taxInput.value) || 0;
+
     const received = Number(receivedInput.value) || 0;
 
+
     const total = subtotal - discount + tax;
+
     const change = Math.max(0, received - total);
 
+
     const billSubtotal = document.getElementById("billSubtotal");
+
     const billDiscount = document.getElementById("billDiscount");
+
     const billTax = document.getElementById("billTax");
+
     const billTotal = document.getElementById("billTotal");
+
     const billChange = document.getElementById("billChange");
+
 
     if (billSubtotal) {
         billSubtotal.textContent = formatMoney(subtotal);
@@ -181,36 +194,51 @@ function calculateBill(forceUpdate = false) {
         billChange.textContent = formatMoney(change);
     }
 
+
     return {
+
         subtotal: subtotal,
+
         discount: discount,
+
         tax: tax,
+
         total: total,
+
         received: received,
+
         change: change
+
     };
 
 }
 
 
-/* =========================================================
-   4. GENERATE CUSTOMER BILL
-   ========================================================= */
+/* ==================== 4. GENERATE CUSTOMER BILL ==================== */
 
 function generateCustomerBill() {
 
     clearMessage("billingMessage");
 
+    currentBill = null;
+
+
     const tokenInput = document.getElementById("orderToken");
+
     const customerInput = document.getElementById("customerName");
+
     const subtotalInput = document.getElementById("subtotal");
+
 
     if (!tokenInput || !customerInput || !subtotalInput) {
         return false;
     }
 
+
     const orderToken = tokenInput.value.trim();
+
     const customerName = customerInput.value.trim();
+
 
     if (!orderToken || !customerName) {
 
@@ -221,9 +249,12 @@ function generateCustomerBill() {
         );
 
         return false;
+
     }
 
+
     const order = getOrderByToken(orderToken);
+
 
     if (!order) {
 
@@ -234,7 +265,9 @@ function generateCustomerBill() {
         );
 
         return false;
+
     }
+
 
     if (order.paymentStatus === "Paid") {
 
@@ -245,7 +278,9 @@ function generateCustomerBill() {
         );
 
         return false;
+
     }
+
 
     if (
         order.customerName &&
@@ -259,14 +294,14 @@ function generateCustomerBill() {
         );
 
         return false;
+
     }
 
-    /*
-       Calculate subtotal from the actual order items.
-       Do not accept an arbitrary subtotal from the cashier.
-    */
+
+    // Calculate subtotal using actual order items.
 
     const actualSubtotal = getOrderSubtotal(order);
+
 
     if (actualSubtotal === null || actualSubtotal <= 0) {
 
@@ -277,15 +312,22 @@ function generateCustomerBill() {
         );
 
         return false;
+
     }
+
 
     subtotalInput.value = actualSubtotal.toFixed(2);
 
+
     const bill = calculateBill(true);
+
 
     if (!bill) {
         return false;
     }
+
+
+    // Validate billing amounts.
 
     if (
         !Number.isFinite(bill.discount) ||
@@ -303,7 +345,9 @@ function generateCustomerBill() {
         );
 
         return false;
+
     }
+
 
     if (bill.discount > bill.subtotal) {
 
@@ -314,7 +358,9 @@ function generateCustomerBill() {
         );
 
         return false;
+
     }
+
 
     if (bill.total <= 0) {
 
@@ -325,7 +371,9 @@ function generateCustomerBill() {
         );
 
         return false;
+
     }
+
 
     if (bill.received < bill.total) {
 
@@ -336,49 +384,45 @@ function generateCustomerBill() {
         );
 
         return false;
+
     }
 
-    const currentBill = {
+
+    // Create temporary bill object.
+
+    currentBill = {
 
         orderId: order.id,
+
         orderToken: order.token,
+
         customerId: order.customerId || "",
+
         customerName: order.customerName || customerName,
 
         subtotal: bill.subtotal,
+
         discount: bill.discount,
+
         tax: bill.tax,
+
         total: bill.total,
 
         received: bill.received,
+
         change: bill.change,
 
         createdAt: getCurrentDateTime()
 
     };
 
-    try {
 
-        localStorage.setItem(
-            "coffee_current_bill",
-            JSON.stringify(currentBill)
-        );
-
-    } catch (error) {
-
-        console.error("Bill storage error:", error);
-
-        setMessage(
-            "billingMessage",
-            "Unable to save bill information.",
-            "error"
-        );
-
-        return false;
-    }
+    // Fill payment form.
 
     const paymentOrder = document.getElementById("paymentOrder");
+
     const amountInput = document.getElementById("amount");
+
 
     if (paymentOrder) {
         paymentOrder.value = order.token;
@@ -388,20 +432,20 @@ function generateCustomerBill() {
         amountInput.value = bill.total.toFixed(2);
     }
 
+
     setMessage(
         "billingMessage",
         "Bill generated successfully. Please record the customer payment.",
         "success"
     );
 
+
     return false;
 
 }
 
 
-/* =========================================================
-   5. RESET BILLING FORM
-   ========================================================= */
+/* ==================== 5. RESET BILLING FORM ==================== */
 
 function resetBillingForm() {
 
@@ -411,50 +455,90 @@ function resetBillingForm() {
         form.reset();
     }
 
-    localStorage.removeItem("coffee_current_bill");
+
+    // Clear temporary bill information.
+
+    currentBill = null;
+
 
     clearMessage("billingMessage");
 
-    document.getElementById("billSubtotal").textContent = formatMoney(0);
-document.getElementById("billDiscount").textContent = formatMoney(0);
-document.getElementById("billTax").textContent = formatMoney(0);
-document.getElementById("billTotal").textContent = formatMoney(0);
-document.getElementById("billChange").textContent = formatMoney(0);
+
+    const billFields = [
+
+        "billSubtotal",
+
+        "billDiscount",
+
+        "billTax",
+
+        "billTotal",
+
+        "billChange"
+
+    ];
+
+
+    billFields.forEach(function (id) {
+
+        const element = document.getElementById(id);
+
+        if (element) {
+            element.textContent = formatMoney(0);
+        }
+
+    });
+
 
     return false;
 
 }
 
 
-/* =========================================================
-   6. SAVE CUSTOMER PAYMENT
-   ========================================================= */
+/* ==================== 6. SAVE CUSTOMER PAYMENT ==================== */
 
 function saveCustomerPayment() {
 
     clearMessage("paymentMessage");
 
+
     const orderInput = document.getElementById("paymentOrder");
+
     const methodInput = document.getElementById("method");
+
     const amountInput = document.getElementById("amount");
+
     const referenceInput = document.getElementById("reference");
+
 
     if (!orderInput || !methodInput || !amountInput || !referenceInput) {
         return false;
     }
 
+
     const orderToken = orderInput.value.trim();
+
     const method = methodInput.value;
+
     const amount = Number(amountInput.value);
+
     const reference = referenceInput.value.trim();
 
+
     const allowedMethods = [
+
         "Cash",
+
         "Card",
+
         "bKash",
+
         "Nagad",
+
         "Rocket"
+
     ];
+
 
     if (
         !orderToken ||
@@ -470,9 +554,12 @@ function saveCustomerPayment() {
         );
 
         return false;
+
     }
 
+
     const orders = getCashierCollection("orders");
+
 
     const orderIndex = orders.findIndex(function (item) {
 
@@ -480,6 +567,7 @@ function saveCustomerPayment() {
             orderToken.toLowerCase();
 
     });
+
 
     if (orderIndex === -1) {
 
@@ -490,9 +578,12 @@ function saveCustomerPayment() {
         );
 
         return false;
+
     }
 
+
     const order = orders[orderIndex];
+
 
     if (order.paymentStatus === "Paid") {
 
@@ -503,15 +594,13 @@ function saveCustomerPayment() {
         );
 
         return false;
+
     }
 
-    /*
-       A bill must be generated before payment.
-    */
 
-    const currentBillText = localStorage.getItem("coffee_current_bill");
+    // A bill must be generated before payment.
 
-    if (!currentBillText) {
+    if (!currentBill) {
 
         setMessage(
             "paymentMessage",
@@ -520,24 +609,11 @@ function saveCustomerPayment() {
         );
 
         return false;
+
     }
 
-    let currentBill;
 
-    try {
-
-        currentBill = JSON.parse(currentBillText);
-
-    } catch (error) {
-
-        setMessage(
-            "paymentMessage",
-            "Invalid bill information. Please generate the bill again.",
-            "error"
-        );
-
-        return false;
-    }
+    // Verify the bill belongs to this order.
 
     if (
         String(currentBill.orderToken || "").toLowerCase() !== orderToken.toLowerCase() ||
@@ -551,13 +627,14 @@ function saveCustomerPayment() {
         );
 
         return false;
+
     }
 
-    /*
-       Verify that the saved bill still matches the real order.
-    */
+
+    // Verify current order subtotal.
 
     const actualSubtotal = getOrderSubtotal(order);
+
 
     if (
         actualSubtotal === null ||
@@ -570,10 +647,15 @@ function saveCustomerPayment() {
             "error"
         );
 
+        currentBill = null;
+
         return false;
+
     }
 
+
     const total = Number(currentBill.total);
+
 
     if (!Number.isFinite(total) || total <= 0) {
 
@@ -584,10 +666,14 @@ function saveCustomerPayment() {
         );
 
         return false;
+
     }
 
+
     const amountInPaisa = getMoneyInPaisa(amount);
+
     const totalInPaisa = getMoneyInPaisa(total);
+
 
     if (amountInPaisa < totalInPaisa) {
 
@@ -598,14 +684,22 @@ function saveCustomerPayment() {
         );
 
         return false;
+
     }
 
+
     const isDigitalPayment = [
+
         "Card",
+
         "bKash",
+
         "Nagad",
+
         "Rocket"
+
     ].includes(method);
+
 
     if (isDigitalPayment && amountInPaisa !== totalInPaisa) {
 
@@ -616,7 +710,9 @@ function saveCustomerPayment() {
         );
 
         return false;
+
     }
+
 
     if (method !== "Cash" && amountInPaisa > totalInPaisa) {
 
@@ -627,10 +723,12 @@ function saveCustomerPayment() {
         );
 
         return false;
+
     }
 
+
     if (
-        ["bKash", "Nagad", "Rocket", "Card"].includes(method) &&
+        isDigitalPayment &&
         !reference
     ) {
 
@@ -641,24 +739,31 @@ function saveCustomerPayment() {
         );
 
         return false;
+
     }
 
+
     const payments = getCashierCollection("payments");
+
     const currentUser = getCurrentUser();
+
     const paymentDate = getCurrentDateTime();
 
-    /*
-       Prevent duplicate successful payments for the same order.
-    */
+
+    // Prevent duplicate payment.
 
     const duplicatePayment = payments.some(function (payment) {
 
         return (
+
             String(payment.orderId) === String(order.id) &&
+
             payment.status === "Paid"
+
         );
 
     });
+
 
     if (duplicatePayment) {
 
@@ -669,53 +774,68 @@ function saveCustomerPayment() {
         );
 
         return false;
+
     }
+
+
+    // Create payment object.
 
     const payment = {
 
         id: CoffeeData.nextId("payments"),
 
         orderId: order.id,
+
         orderToken: order.token,
 
         customerId: order.customerId || "",
+
         customerName: order.customerName || "",
 
         method: method,
 
         amount: total,
+
         receivedAmount: amount,
+
         change: Math.max(0, amount - total),
 
         reference: reference,
 
         status: "Paid",
+
         paymentDate: paymentDate,
 
         cashierId: currentUser ? currentUser.id : "",
+
         cashierName: currentUser ? currentUser.name : "Cashier"
 
     };
 
+
+    // Prepare updated arrays.
+
     const updatedPayments = payments.concat(payment);
 
     const updatedOrders = orders.slice();
+
 
     updatedOrders[orderIndex] = {
 
         ...order,
 
         paymentStatus: "Paid",
+
         paymentMethod: method,
+
         paidAmount: total,
+
         paidAt: paymentDate
 
     };
 
-    /*
-       Save payment first.
-       If order update fails, restore previous payment collection.
-    */
+
+    // Save payment in memory.
 
     if (!CoffeeData.set("payments", updatedPayments)) {
 
@@ -726,15 +846,15 @@ function saveCustomerPayment() {
         );
 
         return false;
+
     }
+
+
+    // Update order payment status.
 
     if (!CoffeeData.set("orders", updatedOrders)) {
 
-        const rollbackSuccess = CoffeeData.set("payments", payments);
-
-        if (!rollbackSuccess) {
-            console.error("Payment rollback failed. Please check LocalStorage data.");
-        }
+        CoffeeData.set("payments", payments);
 
         setMessage(
             "paymentMessage",
@@ -743,9 +863,14 @@ function saveCustomerPayment() {
         );
 
         return false;
+
     }
 
-    localStorage.removeItem("coffee_current_bill");
+
+    // Clear temporary bill after successful payment.
+
+    currentBill = null;
+
 
     const paymentForm = document.getElementById("paymentForm");
 
@@ -753,7 +878,9 @@ function saveCustomerPayment() {
         paymentForm.reset();
     }
 
+
     refreshCashierDashboard();
+
 
     setMessage(
         "paymentMessage",
@@ -761,15 +888,13 @@ function saveCustomerPayment() {
         "success"
     );
 
+
     return false;
 
 }
 
 
-/* =========================================================
-   7. RENDER PAYMENT RECORDS
-   HTML TABLE: 7 COLUMNS
-   ========================================================= */
+/* ==================== 7. RENDER PAYMENT RECORDS ==================== */
 
 function renderPayments() {
 
@@ -777,37 +902,53 @@ function renderPayments() {
 
     const tableBody = document.getElementById("paymentTableBody");
 
+
     if (!tableBody) {
         return;
     }
 
+
     const searchInput = document.getElementById("paymentSearch");
+
     const filterInput = document.getElementById("paymentMethodFilter");
+
 
     const searchText = searchInput
         ? searchInput.value.trim().toLowerCase()
         : "";
 
+
     const methodFilter = filterInput
         ? filterInput.value
         : "All";
 
+
     const filteredPayments = payments.filter(function (payment) {
 
         const matchesSearch =
+
             String(payment.orderToken || "").toLowerCase().includes(searchText) ||
+
             String(payment.reference || "").toLowerCase().includes(searchText) ||
+
             String(payment.id || "").toLowerCase().includes(searchText) ||
+
             String(payment.customerName || "").toLowerCase().includes(searchText);
 
+
         const matchesMethod =
+
             methodFilter === "All" ||
+
             methodFilter === "" ||
+
             payment.method === methodFilter;
+
 
         return matchesSearch && matchesMethod;
 
     });
+
 
     filteredPayments.sort(function (a, b) {
 
@@ -816,7 +957,9 @@ function renderPayments() {
 
     });
 
+
     const paymentCount = document.getElementById("paymentCount");
+
 
     if (paymentCount) {
 
@@ -824,6 +967,7 @@ function renderPayments() {
             "Showing " + filteredPayments.length + " payment record(s).";
 
     }
+
 
     if (filteredPayments.length === 0) {
 
@@ -834,19 +978,29 @@ function renderPayments() {
         );
 
         return;
+
     }
+
 
     tableBody.innerHTML = filteredPayments.map(function (payment) {
 
         return `
             <tr>
+
                 <td>${escapeHTML(payment.id || "-")}</td>
+
                 <td>${escapeHTML(payment.orderToken || "-")}</td>
+
                 <td>${escapeHTML(payment.method || "-")}</td>
+
                 <td>${formatMoney(payment.amount || 0)}</td>
+
                 <td>${escapeHTML(payment.reference || "-")}</td>
+
                 <td>${formatDateTime(payment.paymentDate || payment.date)}</td>
+
                 <td>${getStatusBadge(payment.status || "Paid")}</td>
+
             </tr>
         `;
 
@@ -855,24 +1009,24 @@ function renderPayments() {
 }
 
 
-/* =========================================================
-   8. UPDATE SYSTEM CASH
-   ========================================================= */
+/* ==================== 8. UPDATE SYSTEM CASH ==================== */
 
 function updateSystemCash() {
 
     const dateInput = document.getElementById("reconDate");
 
+
     const selectedDate = dateInput && dateInput.value
+
         ? dateInput.value
+
         : getCurrentDate();
+
 
     const payments = getCashierCollection("payments");
 
-    /*
-       System cash = successful cash sales retained by the shop.
-       It does not include the extra amount returned as change.
-    */
+
+    // Calculate successful cash sales only.
 
     const systemCash = payments.reduce(function (total, payment) {
 
@@ -880,50 +1034,67 @@ function updateSystemCash() {
             payment.paymentDate || payment.date
         );
 
+
         if (
+
             payment.method === "Cash" &&
+
             payment.status === "Paid" &&
+
             paymentDate === selectedDate
+
         ) {
 
             return total + Number(payment.amount || 0);
 
         }
 
+
         return total;
 
     }, 0);
 
+
     const systemCashInput = document.getElementById("systemCash");
 
+
     if (systemCashInput) {
+
         systemCashInput.value = systemCash.toFixed(2);
+
     }
+
 
     return Math.round(systemCash * 100) / 100;
 
 }
 
 
-/* =========================================================
-   9. SAVE DAILY CASH RECONCILIATION
-   ========================================================= */
+/* ==================== 9. SAVE DAILY CASH RECONCILIATION ==================== */
 
 function saveReconciliation() {
 
     clearMessage("reconciliationMessage");
 
+
     const dateInput = document.getElementById("reconDate");
+
     const actualCashInput = document.getElementById("actualCash");
+
     const remarksInput = document.getElementById("cashNote");
+
 
     if (!dateInput || !actualCashInput || !remarksInput) {
         return false;
     }
 
+
     const date = dateInput.value;
+
     const actualCash = Number(actualCashInput.value);
+
     const remarks = remarksInput.value.trim();
+
 
     if (!date) {
 
@@ -934,11 +1105,18 @@ function saveReconciliation() {
         );
 
         return false;
+
     }
 
+
     if (
+
+        actualCashInput.value.trim() === "" ||
+
         !Number.isFinite(actualCash) ||
+
         actualCash < 0
+
     ) {
 
         setMessage(
@@ -948,9 +1126,12 @@ function saveReconciliation() {
         );
 
         return false;
+
     }
 
+
     const currentUser = getCurrentUser();
+
 
     if (!currentUser) {
 
@@ -961,24 +1142,33 @@ function saveReconciliation() {
         );
 
         return false;
+
     }
 
+
     const systemCash = updateSystemCash();
+
 
     const difference = Math.round(
         (actualCash - systemCash) * 100
     ) / 100;
 
+
     const reconciliations = getCashierCollection("reconciliations");
+
 
     const existingRecord = reconciliations.find(function (record) {
 
         return (
+
             record.date === date &&
+
             String(record.cashierId || "") === String(currentUser.id)
+
         );
 
     });
+
 
     if (existingRecord) {
 
@@ -989,7 +1179,9 @@ function saveReconciliation() {
         );
 
         return false;
+
     }
+
 
     const reconciliation = {
 
@@ -998,20 +1190,25 @@ function saveReconciliation() {
         date: date,
 
         systemCash: systemCash,
+
         actualCash: actualCash,
+
         difference: difference,
 
         remarks: remarks,
 
         cashierId: currentUser.id,
+
         cashierName: currentUser.name,
 
         createdAt: getCurrentDateTime()
 
     };
 
+
     const updatedReconciliations =
         reconciliations.concat(reconciliation);
+
 
     if (!CoffeeData.set("reconciliations", updatedReconciliations)) {
 
@@ -1022,18 +1219,25 @@ function saveReconciliation() {
         );
 
         return false;
+
     }
 
+
     const form = document.getElementById("reconciliationForm");
+
 
     if (form) {
         form.reset();
     }
 
+
     dateInput.value = getCurrentDate();
 
+
     updateSystemCash();
+
     renderReconciliations();
+
 
     setMessage(
         "reconciliationMessage",
@@ -1041,15 +1245,13 @@ function saveReconciliation() {
         "success"
     );
 
+
     return false;
 
 }
 
 
-/* =========================================================
-   10. RENDER RECONCILIATION HISTORY
-   HTML TABLE: 7 COLUMNS
-   ========================================================= */
+/* ==================== 10. RENDER RECONCILIATION HISTORY ==================== */
 
 function renderReconciliations() {
 
@@ -1057,15 +1259,18 @@ function renderReconciliations() {
 
     const tableBody = document.getElementById("reconciliationTableBody");
 
+
     if (!tableBody) {
         return;
     }
+
 
     const sortedRecords = reconciliations.slice().sort(function (a, b) {
 
         return new Date(b.date || 0) - new Date(a.date || 0);
 
     });
+
 
     if (sortedRecords.length === 0) {
 
@@ -1076,35 +1281,54 @@ function renderReconciliations() {
         );
 
         return;
+
     }
+
 
     tableBody.innerHTML = sortedRecords.map(function (record) {
 
         const difference = Number(record.difference || 0);
 
+
         let differenceClass = "status-neutral";
 
+
         if (difference > 0) {
+
             differenceClass = "status-success";
+
         } else if (difference < 0) {
+
             differenceClass = "status-danger";
+
         }
+
 
         return `
             <tr>
+
                 <td>${escapeHTML(record.id || "-")}</td>
+
                 <td>${formatDate(record.date)}</td>
+
                 <td>${formatMoney(record.systemCash || 0)}</td>
+
                 <td>${formatMoney(record.actualCash || 0)}</td>
 
                 <td>
+
                     <span class="status-badge ${differenceClass}">
+
                         ${formatMoney(difference)}
+
                     </span>
+
                 </td>
 
                 <td>${escapeHTML(record.remarks || "-")}</td>
+
                 <td>${escapeHTML(record.cashierName || "Cashier")}</td>
+
             </tr>
         `;
 
@@ -1113,9 +1337,7 @@ function renderReconciliations() {
 }
 
 
-/* =========================================================
-   11. UPDATE CASHIER STATISTICS
-   ========================================================= */
+/* ==================== 11. UPDATE CASHIER STATISTICS ==================== */
 
 function updateCashierStatistics() {
 
@@ -1123,18 +1345,24 @@ function updateCashierStatistics() {
 
     const today = getCurrentDate();
 
+
     const todayPayments = payments.filter(function (payment) {
 
         const paymentDate = getDateOnly(
             payment.paymentDate || payment.date
         );
 
+
         return (
+
             paymentDate === today &&
+
             payment.status === "Paid"
+
         );
 
     });
+
 
     const todayCashPayments = todayPayments.filter(function (payment) {
 
@@ -1142,7 +1370,9 @@ function updateCashierStatistics() {
 
     });
 
+
     const todayBillCount = todayPayments.length;
+
 
     const todayBillSales = todayPayments.reduce(function (total, payment) {
 
@@ -1150,15 +1380,21 @@ function updateCashierStatistics() {
 
     }, 0);
 
+
     const todayCashReceived = todayCashPayments.reduce(function (total, payment) {
 
         return total + Number(
+
             payment.receivedAmount !== undefined
+
                 ? payment.receivedAmount
+
                 : payment.amount || 0
+
         );
 
     }, 0);
+
 
     const todayChange = todayCashPayments.reduce(function (total, payment) {
 
@@ -1166,57 +1402,50 @@ function updateCashierStatistics() {
 
     }, 0);
 
+
     const countElement = document.getElementById("todayBillCount");
+
     const salesElement = document.getElementById("todayBillSales");
+
     const cashElement = document.getElementById("todayCashReceived");
+
     const changeElement = document.getElementById("todayChange");
 
+
     if (countElement) {
+
         countElement.textContent = todayBillCount;
+
     }
+
 
     if (salesElement) {
+
         salesElement.textContent = formatMoney(todayBillSales);
+
     }
+
 
     if (cashElement) {
+
         cashElement.textContent = formatMoney(todayCashReceived);
+
     }
 
+
     if (changeElement) {
+
         changeElement.textContent = formatMoney(todayChange);
+
     }
 
 }
 
 
-/* =========================================================
-   12. CROSS-DASHBOARD SYNCHRONIZATION
-   ========================================================= */
+/* ==================== 12. REFRESH WHEN CASHIER RETURNS TO TAB ==================== */
 
-window.addEventListener("storage", function (event) {
-
-    const relevantKeys = [
-        "coffee_corner_orders",
-        "coffee_corner_payments",
-        "coffee_corner_reconciliations"
-    ];
-
-    if (
-        event.key === null ||
-        relevantKeys.includes(event.key)
-    ) {
-
-        refreshCashierDashboard();
-
-    }
-
-});
-
-
-/* =========================================================
-   13. REFRESH WHEN CASHIER RETURNS TO TAB
-   ========================================================= */
+// Refreshes the current page's in-memory data.
+// It does not synchronize other dashboards.
 
 window.addEventListener("focus", function () {
 
@@ -1225,6 +1454,4 @@ window.addEventListener("focus", function () {
 });
 
 
-/* =========================================================
-   14. END OF CASHIER JAVASCRIPT
-   ========================================================= */
+/* ==================== END OF CASHIER JAVASCRIPT ==================== */

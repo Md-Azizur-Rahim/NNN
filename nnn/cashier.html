@@ -5,14 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Coffee Corner - Cashier Dashboard">
+
     <title>Cashier Dashboard | Coffee Corner</title>
 
     <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body>
+<body onload="initializeDashboard()">
 
-    <!-- ============ HEADER ============ -->
+    <!-- ==================== HEADER ==================== -->
+
     <header class="header">
 
         <a href="index.html" class="logo">
@@ -20,21 +22,29 @@
         </a>
 
         <div class="user-info">
-            <span class="badge cashier">Cashier</span>
-            <span id="welcomeUser">Welcome, Aziziur</span>
 
-            <a href="#" class="btn btn-small btn-light" onclick="logout(); return false;">
+            <span class="badge cashier">Cashier</span>
+
+            <span id="welcomeUser">Welcome, Cashier</span>
+
+            <a href="index.html" class="btn btn-small btn-light">
+                Home
+            </a>
+
+            <a href="#" class="btn btn-small" onclick="logout(); return false;">
                 Logout
             </a>
+
         </div>
 
     </header>
 
 
-    <!-- ============ NAVIGATION ============ -->
+    <!-- ==================== NAVIGATION ==================== -->
+
     <nav class="topnav">
 
-        <button type="button" id="nav-billing" onclick="showSection('billing')">
+        <button type="button" id="nav-billing" class="active" onclick="showSection('billing')">
             Smart Billing
         </button>
 
@@ -49,26 +59,33 @@
     </nav>
 
 
-    <!-- ============ MAIN CONTAINER ============ -->
+    <!-- ==================== MAIN CONTAINER ==================== -->
+
     <main class="container">
 
 
-        <!-- ============ SMART BILLING ============ -->
-        <section id="billing" class="page-section">
+        <!-- ==================== 1. SMART BILLING ==================== -->
 
-            <h2 class="page-title">Smart Billing & Change Calculator</h2>
+        <section id="billing" class="page-section active">
+
+            <h2 class="page-title">
+                Smart Billing & Change Calculator
+            </h2>
 
             <p class="page-subtitle">
                 Generate customer bills, calculate payable amounts
                 and automatically calculate the customer's change.
             </p>
 
-            <div id="billingMessage" class="message"></div>
+            <div id="billingMessage" class="message" aria-live="polite">
+            </div>
 
 
             <div class="row">
 
+
                 <!-- BILL GENERATION FORM -->
+
                 <div class="col card">
 
                     <h3>Generate Customer Bill</h3>
@@ -81,7 +98,11 @@
 
                             <table class="form-table">
 
+
+                                <!-- ORDER TOKEN -->
+
                                 <tr>
+
                                     <td>
                                         <label for="orderToken">
                                             Order Token:
@@ -89,12 +110,18 @@
                                     </td>
 
                                     <td>
+
                                         <input type="text" id="orderToken" placeholder="Enter order token" required>
+
                                     </td>
+
                                 </tr>
 
 
+                                <!-- CUSTOMER NAME -->
+
                                 <tr>
+
                                     <td>
                                         <label for="customerName">
                                             Customer Name:
@@ -102,12 +129,18 @@
                                     </td>
 
                                     <td>
+
                                         <input type="text" id="customerName" placeholder="Customer name" required>
+
                                     </td>
+
                                 </tr>
 
 
+                                <!-- SUBTOTAL -->
+
                                 <tr>
+
                                     <td>
                                         <label for="subtotal">
                                             Subtotal (Tk):
@@ -115,13 +148,19 @@
                                     </td>
 
                                     <td>
+
                                         <input type="number" id="subtotal" min="0" step="0.01"
-                                            placeholder="Order subtotal">
+                                            placeholder="Order subtotal" readonly>
+
                                     </td>
+
                                 </tr>
 
 
+                                <!-- DISCOUNT -->
+
                                 <tr>
+
                                     <td>
                                         <label for="discount">
                                             Discount (Tk):
@@ -129,12 +168,18 @@
                                     </td>
 
                                     <td>
+
                                         <input type="number" id="discount" min="0" step="0.01" value="0">
+
                                     </td>
+
                                 </tr>
 
 
+                                <!-- TAX -->
+
                                 <tr>
+
                                     <td>
                                         <label for="tax">
                                             Tax (Tk):
@@ -142,12 +187,18 @@
                                     </td>
 
                                     <td>
+
                                         <input type="number" id="tax" min="0" step="0.01" value="0">
+
                                     </td>
+
                                 </tr>
 
 
+                                <!-- RECEIVED AMOUNT -->
+
                                 <tr>
+
                                     <td>
                                         <label for="received">
                                             Received Amount (Tk):
@@ -155,10 +206,14 @@
                                     </td>
 
                                     <td>
+
                                         <input type="number" id="received" min="0" step="0.01"
-                                            placeholder="Enter received amount">
+                                            placeholder="Enter received amount" required>
+
                                     </td>
+
                                 </tr>
+
 
                             </table>
 
@@ -166,46 +221,65 @@
 
 
                         <!-- BILL SUMMARY -->
+
                         <div class="price-summary">
 
                             <h3>Bill Summary</h3>
 
                             <p>
                                 Subtotal:
-                                <strong id="billSubtotal">৳ 0.00</strong>
+                                <strong id="billSubtotal">
+                                    ৳ 0.00
+                                </strong>
                             </p>
 
                             <p>
                                 Discount:
-                                <strong id="billDiscount">৳ 0.00</strong>
+                                <strong id="billDiscount">
+                                    ৳ 0.00
+                                </strong>
                             </p>
 
                             <p>
                                 Tax:
-                                <strong id="billTax">৳ 0.00</strong>
+                                <strong id="billTax">
+                                    ৳ 0.00
+                                </strong>
                             </p>
 
                             <p>
                                 Total Payable:
-                                <strong id="billTotal">৳ 0.00</strong>
+                                <strong id="billTotal">
+                                    ৳ 0.00
+                                </strong>
                             </p>
 
                             <p>
                                 Change:
-                                <strong id="billChange">৳ 0.00</strong>
+                                <strong id="billChange">
+                                    ৳ 0.00
+                                </strong>
                             </p>
 
                         </div>
 
 
+                        <!-- BILL BUTTONS -->
+
                         <button type="button" class="btn" onclick="calculateBill(true)">
+
                             Calculate Bill
+
                         </button>
+
 
                         <input type="submit" class="btn" value="Generate Bill">
 
+
                         <button type="reset" class="btn btn-secondary" onclick="resetBillingForm()">
+
                             Reset
+
                         </button>
 
                     </form>
@@ -213,7 +287,9 @@
                 </div>
 
 
+
                 <!-- BILLING INFORMATION -->
+
                 <div class="col card">
 
                     <h3>Billing Information</h3>
@@ -224,12 +300,19 @@
                     </p>
 
                     <ul>
+
                         <li>Find the customer order using Order Token.</li>
+
                         <li>Check the order subtotal.</li>
+
                         <li>Apply discount when applicable.</li>
+
                         <li>Calculate tax and total payable amount.</li>
+
                         <li>Enter the received payment amount.</li>
+
                         <li>Calculate the customer's change.</li>
+
                     </ul>
 
                     <p class="hint">
@@ -242,8 +325,11 @@
             </div>
 
 
-            <!-- BILLING SUMMARY CARDS -->
+
+            <!-- BILLING STATISTICS -->
+
             <div class="stats-grid">
+
 
                 <div class="stat-card">
 
@@ -296,27 +382,35 @@
 
                 </div>
 
+
             </div>
 
         </section>
 
 
 
-        <!-- ============ PAYMENT METHOD TRACKING ============ -->
+        <!-- ==================== 2. PAYMENT TRACKING ==================== -->
+
         <section id="payments" class="page-section">
 
-            <h2 class="page-title">Payment Method Tracking</h2>
+            <h2 class="page-title">
+                Payment Method Tracking
+            </h2>
 
             <p class="page-subtitle">
                 Record and manage customer payments through different
                 payment methods.
             </p>
 
-            <div id="paymentMessage" class="message"></div>
+            <div id="paymentMessage" class="message" aria-live="polite">
+            </div>
+
 
 
             <!-- PAYMENT FORM -->
+
             <div class="row">
+
 
                 <div class="col card">
 
@@ -330,7 +424,11 @@
 
                             <table class="form-table">
 
+
+                                <!-- ORDER TOKEN -->
+
                                 <tr>
+
                                     <td>
                                         <label for="paymentOrder">
                                             Order Token:
@@ -338,12 +436,18 @@
                                     </td>
 
                                     <td>
+
                                         <input type="text" id="paymentOrder" placeholder="Enter order token" required>
+
                                     </td>
+
                                 </tr>
 
 
+                                <!-- PAYMENT METHOD -->
+
                                 <tr>
+
                                     <td>
                                         <label for="method">
                                             Payment Method:
@@ -351,24 +455,44 @@
                                     </td>
 
                                     <td>
+
                                         <select id="method" required>
 
                                             <option value="">
                                                 -- Select Payment Method --
                                             </option>
 
-                                            <option value="Cash">Cash</option>
-                                            <option value="Card">Card</option>
-                                            <option value="bKash">bKash</option>
-                                            <option value="Nagad">Nagad</option>
-                                            <option value="Rocket">Rocket</option>
+                                            <option value="Cash">
+                                                Cash
+                                            </option>
+
+                                            <option value="Card">
+                                                Card
+                                            </option>
+
+                                            <option value="bKash">
+                                                bKash
+                                            </option>
+
+                                            <option value="Nagad">
+                                                Nagad
+                                            </option>
+
+                                            <option value="Rocket">
+                                                Rocket
+                                            </option>
 
                                         </select>
+
                                     </td>
+
                                 </tr>
 
 
+                                <!-- PAYMENT AMOUNT -->
+
                                 <tr>
+
                                     <td>
                                         <label for="amount">
                                             Payment Amount (Tk):
@@ -376,13 +500,19 @@
                                     </td>
 
                                     <td>
+
                                         <input type="number" id="amount" min="0.01" step="0.01"
                                             placeholder="Enter payment amount" required>
+
                                     </td>
+
                                 </tr>
 
 
+                                <!-- TRANSACTION REFERENCE -->
+
                                 <tr>
+
                                     <td>
                                         <label for="reference">
                                             Transaction Reference:
@@ -390,9 +520,13 @@
                                     </td>
 
                                     <td>
-                                        <input type="text" id="reference" placeholder="Optional for digital payments">
+
+                                        <input type="text" id="reference" placeholder="Transaction reference">
+
                                     </td>
+
                                 </tr>
+
 
                             </table>
 
@@ -401,8 +535,11 @@
 
                         <input type="submit" class="btn" value="Save Payment">
 
+
                         <button type="reset" class="btn btn-secondary">
+
                             Reset
+
                         </button>
 
                     </form>
@@ -410,16 +547,25 @@
                 </div>
 
 
+
+                <!-- PAYMENT INFORMATION -->
+
                 <div class="col card">
 
                     <h3>Available Payment Methods</h3>
 
                     <ul>
+
                         <li>Cash Payment</li>
+
                         <li>Debit or Credit Card</li>
+
                         <li>bKash Mobile Banking</li>
+
                         <li>Nagad Mobile Banking</li>
+
                         <li>Rocket Mobile Banking</li>
+
                     </ul>
 
                     <p class="hint">
@@ -429,40 +575,69 @@
 
                 </div>
 
+
             </div>
 
 
+
             <!-- PAYMENT RECORD TABLE -->
+
             <div class="card">
 
                 <h3>Payment Records</h3>
 
+
+                <!-- SEARCH AND FILTER -->
+
                 <div class="search-bar">
 
                     <input type="text" id="paymentSearch" placeholder="Search by token or transaction reference..."
-                        onkeyup="renderPayments()">
+                        oninput="renderPayments()">
+
 
                     <select id="paymentMethodFilter" onchange="renderPayments()">
 
-                        <option value="All">All Payment Methods</option>
-                        <option value="Cash">Cash</option>
-                        <option value="Card">Card</option>
-                        <option value="bKash">bKash</option>
-                        <option value="Nagad">Nagad</option>
-                        <option value="Rocket">Rocket</option>
+                        <option value="All">
+                            All Payment Methods
+                        </option>
+
+                        <option value="Cash">
+                            Cash
+                        </option>
+
+                        <option value="Card">
+                            Card
+                        </option>
+
+                        <option value="bKash">
+                            bKash
+                        </option>
+
+                        <option value="Nagad">
+                            Nagad
+                        </option>
+
+                        <option value="Rocket">
+                            Rocket
+                        </option>
 
                     </select>
 
                 </div>
 
-                <p class="result-count" id="paymentCount"></p>
+
+                <p class="result-count" id="paymentCount">
+                </p>
+
 
                 <div class="table-wrapper">
 
                     <table class="data-table">
 
                         <thead>
+
                             <tr>
+
                                 <th>Payment ID</th>
                                 <th>Order Token</th>
                                 <th>Payment Method</th>
@@ -470,11 +645,12 @@
                                 <th>Reference</th>
                                 <th>Payment Date</th>
                                 <th>Status</th>
+
                             </tr>
+
                         </thead>
 
-                        <tbody id="paymentTableBody">
-                        </tbody>
+                        <tbody id="paymentTableBody"></tbody>
 
                     </table>
 
@@ -486,21 +662,28 @@
 
 
 
-        <!-- ============ DAILY CASH RECONCILIATION ============ -->
+        <!-- ==================== 3. DAILY CASH RECONCILIATION ==================== -->
+
         <section id="reconciliation" class="page-section">
 
-            <h2 class="page-title">Daily Cash Reconciliation</h2>
+            <h2 class="page-title">
+                Daily Cash Reconciliation
+            </h2>
 
             <p class="page-subtitle">
                 Compare the system-recorded cash amount with the
                 actual cash available at the end of the day.
             </p>
 
-            <div id="reconciliationMessage" class="message"></div>
+            <div id="reconciliationMessage" class="message" aria-live="polite">
+            </div>
+
 
 
             <!-- RECONCILIATION FORM -->
+
             <div class="row">
+
 
                 <div class="col card">
 
@@ -514,7 +697,11 @@
 
                             <table class="form-table">
 
+
+                                <!-- DATE -->
+
                                 <tr>
+
                                     <td>
                                         <label for="reconDate">
                                             Reconciliation Date:
@@ -522,12 +709,18 @@
                                     </td>
 
                                     <td>
+
                                         <input type="date" id="reconDate" required>
+
                                     </td>
+
                                 </tr>
 
 
+                                <!-- SYSTEM CASH -->
+
                                 <tr>
+
                                     <td>
                                         <label for="systemCash">
                                             System Cash (Tk):
@@ -535,13 +728,19 @@
                                     </td>
 
                                     <td>
+
                                         <input type="number" id="systemCash" min="0" step="0.01"
                                             placeholder="System calculated cash" readonly>
+
                                     </td>
+
                                 </tr>
 
 
+                                <!-- ACTUAL CASH -->
+
                                 <tr>
+
                                     <td>
                                         <label for="actualCash">
                                             Actual Cash (Tk):
@@ -549,13 +748,19 @@
                                     </td>
 
                                     <td>
+
                                         <input type="number" id="actualCash" min="0" step="0.01"
                                             placeholder="Count actual cash" required>
+
                                     </td>
+
                                 </tr>
 
 
+                                <!-- REMARKS -->
+
                                 <tr>
+
                                     <td>
                                         <label for="cashNote">
                                             Notes / Remarks:
@@ -563,10 +768,14 @@
                                     </td>
 
                                     <td>
-                                        <textarea id="cashNote"
-                                            placeholder="Write any cash difference explanation"></textarea>
+
+                                        <textarea id="cashNote" placeholder="Write any cash difference explanation">
+                                        </textarea>
+
                                     </td>
+
                                 </tr>
+
 
                             </table>
 
@@ -574,8 +783,11 @@
 
 
                         <button type="button" class="btn" onclick="updateSystemCash()">
+
                             Calculate System Cash
+
                         </button>
+
 
                         <input type="submit" class="btn" value="Save Reconciliation">
 
@@ -584,18 +796,27 @@
                 </div>
 
 
+
                 <!-- RECONCILIATION INFORMATION -->
+
                 <div class="col card">
 
                     <h3>Reconciliation Guidelines</h3>
 
                     <ul>
+
                         <li>Select the reconciliation date.</li>
+
                         <li>Calculate the system-recorded cash.</li>
+
                         <li>Count the actual cash available.</li>
+
                         <li>Compare the system cash with actual cash.</li>
+
                         <li>Record any difference in the remarks.</li>
+
                         <li>Save the daily reconciliation record.</li>
+
                     </ul>
 
                     <p class="hint">
@@ -605,10 +826,13 @@
 
                 </div>
 
+
             </div>
 
 
+
             <!-- RECONCILIATION HISTORY -->
+
             <div class="card">
 
                 <h3>Reconciliation History</h3>
@@ -618,7 +842,9 @@
                     <table class="data-table">
 
                         <thead>
+
                             <tr>
+
                                 <th>Record ID</th>
                                 <th>Date</th>
                                 <th>System Cash</th>
@@ -626,11 +852,12 @@
                                 <th>Difference</th>
                                 <th>Remarks</th>
                                 <th>Cashier</th>
+
                             </tr>
+
                         </thead>
 
-                        <tbody id="reconciliationTableBody">
-                        </tbody>
+                        <tbody id="reconciliationTableBody"></tbody>
 
                     </table>
 
@@ -640,10 +867,13 @@
 
         </section>
 
+
     </main>
 
 
-    <!-- ============ FOOTER ============ -->
+
+    <!-- ==================== FOOTER ==================== -->
+
     <footer class="footer">
 
         &copy; 2026 Coffee Corner &middot;
@@ -652,10 +882,15 @@
     </footer>
 
 
-    <!-- ============ JAVASCRIPT FILES ============ -->
+
+    <!-- ==================== JAVASCRIPT FILES ==================== -->
+
     <script src="js/data.js"></script>
+
     <script src="js/common.js"></script>
+
     <script src="js/cashier.js"></script>
+
 
 </body>
 

@@ -1,8 +1,4 @@
-/* =====================================================
-   COFFEE CORNER - BARISTA / STAFF DASHBOARD
-   Complete Updated JavaScript
-   Uses: data.js and common.js
-   ===================================================== */
+
 
 
 /* ==================== 1. ACCESS CONTROL ==================== */
@@ -11,61 +7,91 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const currentUser = getCurrentUser();
 
-    // User must be logged in and Active.
+
+    // Check login status and account status.
+
     if (!currentUser || currentUser.status !== "Active") {
-        localStorage.removeItem("coffee_current_user");
-        window.location.href = "../login.html";
+
+        alert("Please login first.");
+
+        window.location.href = "login.html";
+
         return;
+
     }
 
-    // Accept Staff or Barista role.
-    const userRole = String(currentUser.role || "").trim().toLowerCase();
+
+    // Allow Staff or Barista role.
+
+    const userRole = String(currentUser.role || "")
+        .trim()
+        .toLowerCase();
+
 
     if (userRole !== "staff" && userRole !== "barista") {
 
-        alert("Access denied! You are not authorized to access this page.");
+        alert(
+            "Access denied! You are not authorized to access this page."
+        );
 
-        if (typeof redirectToDashboard === "function") {
-            redirectToDashboard(currentUser.role);
-        } else {
-            window.location.href = "../login.html";
-        }
+        redirectToDashboard(currentUser.role);
 
         return;
+
     }
 
-    // Display logged-in user's name.
+
+    // Display current user's name.
+
     const welcomeElement = document.getElementById("welcomeUser");
 
     if (welcomeElement) {
-        welcomeElement.textContent = "Welcome, " + currentUser.name;
+
+        welcomeElement.textContent =
+            "Welcome, " + currentUser.name;
+
     }
+
 
     // Show first dashboard section.
-    if (typeof showSection === "function") {
-        showSection("queue");
-    }
 
-    // Initialize all dashboard modules.
+    showSection("queue");
+
+
+    // Initialize dashboard modules.
+
     loadStockOptions();
 
     renderPreparationQueue();
+
     renderStock();
+
     renderWasteReports();
 
-    // Automatically update units when stock item changes.
+
+    // Automatically synchronize stock units.
+
     const stockItem = document.getElementById("stockItem");
+
     const wasteItem = document.getElementById("wasteItem");
 
+
     if (stockItem) {
+
         stockItem.addEventListener("change", syncStockUnit);
+
     }
+
 
     if (wasteItem) {
+
         wasteItem.addEventListener("change", syncWasteUnit);
+
     }
 
+
     syncStockUnit();
+
     syncWasteUnit();
 
 });
@@ -75,107 +101,178 @@ document.addEventListener("DOMContentLoaded", function () {
 
 /*
    FIFO = First In, First Out.
-   Older orders will appear before newer orders.
+
+   Older customer orders appear before newer orders.
 */
+
 
 function renderPreparationQueue() {
 
-    const allOrders = CoffeeData.get("orders");
+    const allOrders = CoffeeData.get("orders") || [];
+
 
     const searchElement = document.getElementById("queueSearch");
+
     const filterElement = document.getElementById("queueStatusFilter");
 
+
     const searchText = searchElement
+
         ? searchElement.value.trim().toLowerCase()
+
         : "";
 
+
     const statusFilter = filterElement
+
         ? filterElement.value
+
         : "All";
 
-    // FIFO sorting.
+
+    // Sort orders using FIFO.
+
     const sortedOrders = allOrders.slice().sort(function (a, b) {
 
         const dateA = new Date(a.createdAt || 0).getTime();
+
         const dateB = new Date(b.createdAt || 0).getTime();
 
+
         if (dateA !== dateB) {
+
             return dateA - dateB;
+
         }
 
+
         return String(a.id).localeCompare(String(b.id));
+
     });
 
 
-    // Search and status filtering.
+    // Search and filter orders.
+
     const filteredOrders = sortedOrders.filter(function (order) {
 
         const token = String(order.token || "").toLowerCase();
+
         const customer = String(order.customerName || "").toLowerCase();
 
+
         const matchesSearch =
+
             token.includes(searchText) ||
+
             customer.includes(searchText);
 
+
         const matchesStatus =
+
             statusFilter === "All" ||
+
             order.status === statusFilter;
+
 
         return matchesSearch && matchesStatus;
 
     });
 
 
-    // Update statistics.
+    // Update order statistics.
+
     setText("totalQueueOrders", allOrders.length);
 
+
     setText(
+
         "pendingQueueOrders",
-        allOrders.filter(o => o.status === "Pending").length
+
+        allOrders.filter(function (order) {
+
+            return order.status === "Pending";
+
+        }).length
+
     );
 
+
     setText(
+
         "preparingQueueOrders",
-        allOrders.filter(o => o.status === "Preparing").length
+
+        allOrders.filter(function (order) {
+
+            return order.status === "Preparing";
+
+        }).length
+
     );
+
 
     setText(
+
         "completedQueueOrders",
-        allOrders.filter(o => o.status === "Completed").length
+
+        allOrders.filter(function (order) {
+
+            return order.status === "Completed";
+
+        }).length
+
     );
 
 
-    // Display orders.
+    // Display order information.
+
     const tableBody = document.getElementById("queueTableBody");
+
 
     if (!tableBody) {
         return;
     }
 
+
     if (filteredOrders.length === 0) {
 
         tableBody.innerHTML =
+
             '<tr><td colspan="7">No orders found.</td></tr>';
 
         return;
+
     }
 
 
     tableBody.innerHTML = filteredOrders.map(function (order) {
 
-        const items = Array.isArray(order.items) ? order.items : [];
+        const items = Array.isArray(order.items)
+
+            ? order.items
+
+            : [];
+
 
         const itemNames = items.map(function (item) {
+
             return escapeHTML(item.name || "Coffee") +
+
                 " × " +
+
                 Number(item.quantity || 1);
+
         }).join(", ");
 
+
         const totalQuantity = items.reduce(function (total, item) {
+
             return total + Number(item.quantity || 1);
+
         }, 0);
 
+
         return `
+
             <tr>
 
                 <td>${escapeHTML(order.id)}</td>
@@ -193,6 +290,7 @@ function renderPreparationQueue() {
                 <td>${getStatusBadge(order.status)}</td>
 
             </tr>
+
         `;
 
     }).join("");
@@ -204,89 +302,177 @@ function renderPreparationQueue() {
 
 function updateOrderStatus() {
 
+    clearMessage("queueMessage");
+
+
     const tokenInput = document.getElementById("queueToken");
+
     const statusInput = document.getElementById("orderStatus");
 
+
+    if (!tokenInput || !statusInput) {
+        return false;
+    }
+
+
     const token = tokenInput.value.trim();
+
     const newStatus = statusInput.value;
+
+
+    // Validate inputs.
 
     if (!token || !newStatus) {
 
         setMessage(
+
             "queueMessage",
+
             "Please enter an order token and select a status.",
+
             "error"
+
         );
 
         return false;
+
     }
 
 
+    // Allowed order statuses.
+
     const allowedStatuses = [
+
         "Pending",
+
         "Preparing",
+
         "Ready",
+
         "Completed"
+
     ];
+
 
     if (!allowedStatuses.includes(newStatus)) {
 
         setMessage(
+
             "queueMessage",
+
             "Invalid order status selected.",
+
             "error"
+
         );
 
         return false;
+
     }
 
 
-    const orders = CoffeeData.get("orders");
+    // Get orders from memory.
 
-    const order = orders.find(function (item) {
-        return String(item.token).toLowerCase() === token.toLowerCase();
+    const orders = CoffeeData.get("orders") || [];
+
+
+    // Find order by token.
+
+    const orderIndex = orders.findIndex(function (item) {
+
+        return String(item.token || "").toLowerCase() ===
+
+            token.toLowerCase();
+
     });
 
 
-    if (!order) {
+    if (orderIndex === -1) {
 
         setMessage(
+
             "queueMessage",
+
             "No order found with this token.",
+
             "error"
+
         );
 
         return false;
+
     }
 
 
-    order.status = newStatus;
-    order.updatedAt = new Date().toISOString();
+    const order = orders[orderIndex];
 
 
-    if (!CoffeeData.set("orders", orders)) {
+    // Update order status.
+
+    const updatedOrders = orders.slice();
+
+
+    updatedOrders[orderIndex] = {
+
+        ...order,
+
+        status: newStatus,
+
+        updatedAt: getCurrentDateTime()
+
+    };
+
+
+    // Save updated orders.
+
+    if (!CoffeeData.set("orders", updatedOrders)) {
 
         setMessage(
+
             "queueMessage",
+
             "Unable to update order. Please try again.",
+
             "error"
+
         );
 
         return false;
+
     }
 
 
-    document.getElementById("queueForm").reset();
+    // Reset form.
+
+    const form = document.getElementById("queueForm");
+
+    if (form) {
+
+        form.reset();
+
+    }
+
+
+    // Refresh queue.
 
     renderPreparationQueue();
 
+
     setMessage(
+
         "queueMessage",
-        "Order " + token + " status updated to " + newStatus + ".",
+
+        "Order " + token +
+
+        " status updated to " + newStatus + ".",
+
         "success"
+
     );
 
+
     return false;
+
 }
 
 
@@ -294,10 +480,13 @@ function updateOrderStatus() {
 
 function loadStockOptions() {
 
-    const stockItems = CoffeeData.get("stock");
+    const stockItems = CoffeeData.get("stock") || [];
+
 
     const stockSelect = document.getElementById("stockItem");
+
     const wasteSelect = document.getElementById("wasteItem");
+
 
     if (!stockSelect || !wasteSelect) {
         return;
@@ -307,19 +496,30 @@ function loadStockOptions() {
     const options = stockItems.map(function (item) {
 
         return `
+
             <option value="${escapeHTML(item.id)}">
+
                 ${escapeHTML(item.name)}
+
             </option>
+
         `;
 
     }).join("");
 
 
     stockSelect.innerHTML =
-        '<option value="">-- Select Stock Item --</option>' + options;
+
+        '<option value="">-- Select Stock Item --</option>' +
+
+        options;
+
 
     wasteSelect.innerHTML =
-        '<option value="">-- Select Product --</option>' + options;
+
+        '<option value="">-- Select Product --</option>' +
+
+        options;
 
 }
 
@@ -328,38 +528,63 @@ function loadStockOptions() {
 
 function syncStockUnit() {
 
-    const selectedId = document.getElementById("stockItem").value;
-
-    const stockItems = CoffeeData.get("stock");
-
-    const item = stockItems.find(function (stock) {
-        return String(stock.id) === String(selectedId);
-    });
+    const stockSelect = document.getElementById("stockItem");
 
     const quantityInput = document.getElementById("stockQty");
+
     const unitInput = document.getElementById("stockUnit");
 
-    if (!item) {
 
-        if (quantityInput) {
-            quantityInput.placeholder = "Enter updated quantity";
-        }
-
-        if (unitInput) {
-            unitInput.value = "";
-        }
-
+    if (!stockSelect) {
         return;
     }
 
 
-    if (quantityInput) {
-        quantityInput.placeholder =
-            "Current quantity: " + item.quantity;
+    const selectedId = stockSelect.value;
+
+
+    const stockItems = CoffeeData.get("stock") || [];
+
+
+    const item = stockItems.find(function (stock) {
+
+        return String(stock.id) === String(selectedId);
+
+    });
+
+
+    if (!item) {
+
+        if (quantityInput) {
+
+            quantityInput.placeholder = "Enter updated quantity";
+
+        }
+
+        if (unitInput) {
+
+            unitInput.value = "";
+
+        }
+
+        return;
+
     }
 
+
+    if (quantityInput) {
+
+        quantityInput.placeholder =
+
+            "Current quantity: " + item.quantity;
+
+    }
+
+
     if (unitInput) {
+
         unitInput.value = item.unit || "";
+
     }
 
 }
@@ -369,19 +594,30 @@ function syncStockUnit() {
 
 function syncWasteUnit() {
 
-    const selectedId = document.getElementById("wasteItem").value;
-
-    const stockItems = CoffeeData.get("stock");
-
-    const item = stockItems.find(function (stock) {
-        return String(stock.id) === String(selectedId);
-    });
+    const wasteSelect = document.getElementById("wasteItem");
 
     const unitInput = document.getElementById("wasteUnit");
 
-    if (unitInput) {
-        unitInput.value = item ? item.unit || "" : "";
+
+    if (!wasteSelect || !unitInput) {
+        return;
     }
+
+
+    const selectedId = wasteSelect.value;
+
+
+    const stockItems = CoffeeData.get("stock") || [];
+
+
+    const item = stockItems.find(function (stock) {
+
+        return String(stock.id) === String(selectedId);
+
+    });
+
+
+    unitInput.value = item ? item.unit || "" : "";
 
 }
 
@@ -391,15 +627,23 @@ function syncWasteUnit() {
 function stockStatus(item) {
 
     const quantity = Number(item.quantity || 0);
+
     const minimum = Number(item.minimum || 0);
 
+
     if (quantity <= 0) {
+
         return "Out of Stock";
+
     }
 
+
     if (quantity <= minimum) {
+
         return "Low Stock";
+
     }
+
 
     return "Available";
 
@@ -410,58 +654,104 @@ function stockStatus(item) {
 
 function renderStock() {
 
-    const allStock = CoffeeData.get("stock");
+    const allStock = CoffeeData.get("stock") || [];
+
 
     const searchElement = document.getElementById("stockSearch");
+
     const filterElement = document.getElementById("stockStatusFilter");
 
+
     const searchText = searchElement
+
         ? searchElement.value.trim().toLowerCase()
+
         : "";
 
+
     const statusFilter = filterElement
+
         ? filterElement.value
+
         : "All";
 
+
+    // Search and filter stock items.
 
     const filteredStock = allStock.filter(function (item) {
 
         const name = String(item.name || "").toLowerCase();
+
         const category = String(item.category || "").toLowerCase();
 
+
         const matchesSearch =
+
             name.includes(searchText) ||
+
             category.includes(searchText);
 
+
         const matchesStatus =
+
             statusFilter === "All" ||
+
             stockStatus(item) === statusFilter;
+
 
         return matchesSearch && matchesStatus;
 
     });
 
 
-    // Update stock summary.
+    // Update stock statistics.
+
     setText("totalStockItems", allStock.length);
 
+
     setText(
+
         "availableStockItems",
-        allStock.filter(item => stockStatus(item) === "Available").length
+
+        allStock.filter(function (item) {
+
+            return stockStatus(item) === "Available";
+
+        }).length
+
     );
 
+
     setText(
+
         "lowStockItems",
-        allStock.filter(item => stockStatus(item) === "Low Stock").length
+
+        allStock.filter(function (item) {
+
+            return stockStatus(item) === "Low Stock";
+
+        }).length
+
     );
+
 
     setText(
+
         "outOfStockItems",
-        allStock.filter(item => stockStatus(item) === "Out of Stock").length
+
+        allStock.filter(function (item) {
+
+            return stockStatus(item) === "Out of Stock";
+
+        }).length
+
     );
 
+
+    // Display stock table.
 
     const tableBody = document.getElementById("stockTableBody");
+
 
     if (!tableBody) {
         return;
@@ -471,15 +761,18 @@ function renderStock() {
     if (filteredStock.length === 0) {
 
         tableBody.innerHTML =
+
             '<tr><td colspan="7">No stock items found.</td></tr>';
 
         return;
+
     }
 
 
     tableBody.innerHTML = filteredStock.map(function (item) {
 
         return `
+
             <tr>
 
                 <td>${escapeHTML(item.id)}</td>
@@ -497,6 +790,7 @@ function renderStock() {
                 <td>${getStatusBadge(stockStatus(item))}</td>
 
             </tr>
+
         `;
 
     }).join("");
@@ -508,84 +802,171 @@ function renderStock() {
 
 function updateStockQuantity() {
 
-    const selectedId = document.getElementById("stockItem").value;
+    clearMessage("stockMessage");
 
-    const quantity = Number(document.getElementById("stockQty").value);
 
-    const unit = document.getElementById("stockUnit").value.trim();
+    const stockSelect = document.getElementById("stockItem");
 
-    const stockItems = CoffeeData.get("stock");
+    const quantityInput = document.getElementById("stockQty");
 
-    const item = stockItems.find(function (stock) {
+    const unitInput = document.getElementById("stockUnit");
+
+
+    if (!stockSelect || !quantityInput || !unitInput) {
+        return false;
+    }
+
+
+    const selectedId = stockSelect.value;
+
+    const quantity = Number(quantityInput.value);
+
+    const unit = unitInput.value.trim();
+
+
+    const stockItems = CoffeeData.get("stock") || [];
+
+
+    // Find selected stock item.
+
+    const itemIndex = stockItems.findIndex(function (stock) {
+
         return String(stock.id) === String(selectedId);
+
     });
 
 
-    if (!item) {
+    if (itemIndex === -1) {
 
         setMessage(
+
             "stockMessage",
+
             "Please select a valid stock item.",
+
             "error"
+
         );
 
         return false;
+
     }
 
 
-    if (!Number.isFinite(quantity) || quantity < 0) {
+    // Validate quantity.
+
+    if (
+
+        quantityInput.value.trim() === "" ||
+
+        !Number.isFinite(quantity) ||
+
+        quantity < 0
+
+    ) {
 
         setMessage(
+
             "stockMessage",
+
             "Quantity must be zero or a positive number.",
+
             "error"
+
         );
 
         return false;
+
     }
 
+
+    // Validate unit.
 
     if (!unit) {
 
         setMessage(
+
             "stockMessage",
+
             "Please enter the stock unit.",
+
             "error"
+
         );
 
         return false;
+
     }
 
 
-    // Update stock.
-    item.quantity = quantity;
-    item.unit = unit;
+    // Create updated stock array.
+
+    const updatedStock = stockItems.slice();
 
 
-    if (!CoffeeData.set("stock", stockItems)) {
+    updatedStock[itemIndex] = {
+
+        ...stockItems[itemIndex],
+
+        quantity: quantity,
+
+        unit: unit,
+
+        updatedAt: getCurrentDateTime()
+
+    };
+
+
+    // Save updated stock.
+
+    if (!CoffeeData.set("stock", updatedStock)) {
 
         setMessage(
+
             "stockMessage",
-            "Stock could not be saved.",
+
+            "Stock could not be updated.",
+
             "error"
+
         );
 
         return false;
+
     }
 
 
-    document.getElementById("stockForm").reset();
+    // Reset form.
+
+    const form = document.getElementById("stockForm");
+
+    if (form) {
+
+        form.reset();
+
+    }
+
 
     loadStockOptions();
+
+    syncStockUnit();
+
     renderStock();
 
+
     setMessage(
+
         "stockMessage",
+
         "Stock quantity updated successfully.",
+
         "success"
+
     );
 
+
     return false;
+
 }
 
 
@@ -593,75 +974,180 @@ function updateStockQuantity() {
 
 function submitWasteReport() {
 
-    const selectedId = document.getElementById("wasteItem").value;
+    clearMessage("wasteMessage");
 
-    const quantity = Number(document.getElementById("wasteQty").value);
 
-    const reason = document.getElementById("reason").value;
+    const wasteSelect = document.getElementById("wasteItem");
 
-    const details = document.getElementById("wasteDetails").value.trim();
+    const quantityInput = document.getElementById("wasteQty");
 
-    const stockItems = CoffeeData.get("stock");
+    const reasonInput = document.getElementById("reason");
 
-    const item = stockItems.find(function (stock) {
+    const detailsInput = document.getElementById("wasteDetails");
+
+
+    if (
+        !wasteSelect ||
+        !quantityInput ||
+        !reasonInput ||
+        !detailsInput
+    ) {
+        return false;
+    }
+
+
+    const selectedId = wasteSelect.value;
+
+    const quantity = Number(quantityInput.value);
+
+    const reason = reasonInput.value;
+
+    const details = detailsInput.value.trim();
+
+
+    const stockItems = CoffeeData.get("stock") || [];
+
+
+    // Find selected stock item.
+
+    const itemIndex = stockItems.findIndex(function (stock) {
+
         return String(stock.id) === String(selectedId);
+
     });
 
 
-    if (!item) {
+    if (itemIndex === -1) {
 
         setMessage(
+
             "wasteMessage",
+
             "Please select a valid product.",
+
             "error"
+
         );
 
         return false;
+
     }
 
 
-    if (!Number.isFinite(quantity) || quantity <= 0) {
+    const item = stockItems[itemIndex];
+
+
+    // Validate quantity.
+
+    if (
+
+        quantityInput.value.trim() === "" ||
+
+        !Number.isFinite(quantity) ||
+
+        quantity <= 0
+
+    ) {
 
         setMessage(
+
             "wasteMessage",
+
             "Enter a valid damaged quantity.",
+
             "error"
+
         );
 
         return false;
+
     }
 
+
+    // Check available stock.
 
     if (quantity > Number(item.quantity)) {
 
         setMessage(
+
             "wasteMessage",
+
             "Damaged quantity cannot exceed available stock.",
+
             "error"
+
         );
 
         return false;
+
     }
 
 
-    if (!reason) {
+    // Validate reason.
+
+    const allowedReasons = [
+
+        "Expired",
+
+        "Damaged",
+
+        "Spoiled",
+
+        "Contaminated",
+
+        "Other"
+
+    ];
+
+
+    if (!allowedReasons.includes(reason)) {
 
         setMessage(
+
             "wasteMessage",
-            "Please select a damage reason.",
+
+            "Please select a valid damage reason.",
+
             "error"
+
         );
 
         return false;
+
     }
 
+
+    // Verify current user.
 
     const currentUser = getCurrentUser();
 
-    const reports = CoffeeData.get("wasteReports");
 
-    const oldQuantity = item.quantity;
+    if (!currentUser) {
 
+        setMessage(
+
+            "wasteMessage",
+
+            "Unable to identify staff account. Please login again.",
+
+            "error"
+
+        );
+
+        return false;
+
+    }
+
+
+    const reports = CoffeeData.get("wasteReports") || [];
+
+
+    // Store previous quantity for rollback.
+
+    const oldQuantity = Number(item.quantity);
+
+
+    // Create waste report.
 
     const report = {
 
@@ -679,64 +1165,122 @@ function submitWasteReport() {
 
         reportedBy: currentUser.name,
 
-        createdAt: new Date().toISOString()
+        createdAt: getCurrentDateTime()
 
     };
 
 
-    // Reduce stock.
-    item.quantity = Number(item.quantity) - quantity;
+    // Reduce stock quantity.
+
+    const updatedStock = stockItems.slice();
 
 
-    // Save stock first.
-    if (!CoffeeData.set("stock", stockItems)) {
+    updatedStock[itemIndex] = {
+
+        ...item,
+
+        quantity: oldQuantity - quantity,
+
+        updatedAt: getCurrentDateTime()
+
+    };
+
+
+    // Save updated stock first.
+
+    if (!CoffeeData.set("stock", updatedStock)) {
 
         setMessage(
+
             "wasteMessage",
+
             "Unable to update stock. Report was not saved.",
+
             "error"
+
         );
 
         return false;
+
     }
 
 
     // Save waste report.
-    reports.push(report);
 
-    if (!CoffeeData.set("wasteReports", reports)) {
+    const updatedReports = reports.concat(report);
 
-        // Restore previous stock if report saving fails.
-        item.quantity = oldQuantity;
-        CoffeeData.set("stock", stockItems);
+
+    if (!CoffeeData.set("wasteReports", updatedReports)) {
+
+        // Restore previous stock quantity.
+
+        const restoredStock = updatedStock.slice();
+
+
+        restoredStock[itemIndex] = {
+
+            ...restoredStock[itemIndex],
+
+            quantity: oldQuantity
+
+        };
+
+
+        CoffeeData.set("stock", restoredStock);
+
 
         setMessage(
+
             "wasteMessage",
-            "Unable to save report. Stock quantity was restored.",
+
+            "Unable to save report. Previous stock quantity was restored.",
+
             "error"
+
         );
 
         return false;
+
     }
 
 
-    document.getElementById("wasteForm").reset();
+    // Reset waste form.
+
+    const form = document.getElementById("wasteForm");
+
+    if (form) {
+
+        form.reset();
+
+    }
+
+
+    // Refresh dashboard information.
 
     loadStockOptions();
 
     syncStockUnit();
+
     syncWasteUnit();
 
     renderStock();
+
     renderWasteReports();
 
+
     setMessage(
+
         "wasteMessage",
+
         "Waste report submitted and stock quantity adjusted successfully.",
+
         "success"
+
     );
 
+
     return false;
+
 }
 
 
@@ -744,19 +1288,35 @@ function submitWasteReport() {
 
 function renderWasteReports() {
 
-    const allReports = CoffeeData.get("wasteReports").slice().reverse();
+    const allReports =
+
+        (CoffeeData.get("wasteReports") || [])
+
+            .slice()
+
+            .reverse();
+
 
     const searchElement = document.getElementById("wasteSearch");
+
     const filterElement = document.getElementById("wasteReasonFilter");
 
+
     const searchText = searchElement
+
         ? searchElement.value.trim().toLowerCase()
+
         : "";
 
+
     const reasonFilter = filterElement
+
         ? filterElement.value
+
         : "All";
 
+
+    // Filter waste reports.
 
     const filteredReports = allReports.filter(function (report) {
 
@@ -766,13 +1326,20 @@ function renderWasteReports() {
 
         const reason = String(report.reason || "");
 
+
         const matchesSearch =
+
             itemName.includes(searchText) ||
+
             reportId.includes(searchText);
 
+
         const matchesReason =
+
             reasonFilter === "All" ||
+
             reason === reasonFilter;
+
 
         return matchesSearch && matchesReason;
 
@@ -780,6 +1347,7 @@ function renderWasteReports() {
 
 
     const tableBody = document.getElementById("wasteTableBody");
+
 
     if (!tableBody) {
         return;
@@ -789,15 +1357,20 @@ function renderWasteReports() {
     if (filteredReports.length === 0) {
 
         tableBody.innerHTML =
+
             '<tr><td colspan="8">No waste reports found.</td></tr>';
 
         return;
+
     }
 
+
+    // Display waste reports.
 
     tableBody.innerHTML = filteredReports.map(function (report) {
 
         return `
+
             <tr>
 
                 <td>${escapeHTML(report.id)}</td>
@@ -817,6 +1390,7 @@ function renderWasteReports() {
                 <td>${formatDateTime(report.createdAt)}</td>
 
             </tr>
+
         `;
 
     }).join("");
@@ -830,35 +1404,48 @@ function setText(elementId, value) {
 
     const element = document.getElementById(elementId);
 
+
     if (element) {
+
         element.textContent = value;
+
     }
 
 }
 
 
-/* ==================== 13. RESET FORMS ==================== */
+/* ==================== 13. RESET QUEUE FORM ==================== */
 
 function resetQueueForm() {
 
     const form = document.getElementById("queueForm");
 
+
     if (form) {
+
         form.reset();
+
     }
+
 
     clearMessage("queueMessage");
 
 }
 
 
+/* ==================== 14. RESET STOCK FORM ==================== */
+
 function resetStockForm() {
 
     const form = document.getElementById("stockForm");
 
+
     if (form) {
+
         form.reset();
+
     }
+
 
     syncStockUnit();
 
@@ -867,13 +1454,19 @@ function resetStockForm() {
 }
 
 
+/* ==================== 15. RESET WASTE FORM ==================== */
+
 function resetWasteForm() {
 
     const form = document.getElementById("wasteForm");
 
+
     if (form) {
+
         form.reset();
+
     }
+
 
     syncWasteUnit();
 
@@ -882,26 +1475,4 @@ function resetWasteForm() {
 }
 
 
-/* ==================== 14. STORAGE EVENT ==================== */
-
-/*
-   Update dashboard when another browser tab changes
-   order or stock information.
-*/
-
-window.addEventListener("storage", function (event) {
-
-    if (event.key === "coffee_corner_orders") {
-        renderPreparationQueue();
-    }
-
-    if (event.key === "coffee_corner_stock") {
-        loadStockOptions();
-        renderStock();
-    }
-
-    if (event.key === "coffee_corner_wasteReports") {
-        renderWasteReports();
-    }
-
-});
+/* ==================== END OF BARISTA JAVASCRIPT ==================== */

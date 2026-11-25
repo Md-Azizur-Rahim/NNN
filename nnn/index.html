@@ -19,64 +19,146 @@
             Coffee<span>Corner</span>
         </a>
 
-        <nav class="home-nav">
+        <div class="user-info">
 
-            <a href="#home">Home</a>
-
-            <a href="#about">About Us</a>
-
-            <a href="#menu">Our Menu</a>
-
-            <a href="#features">Features</a>
-
-            <a href="#contact">Contact</a>
-
-            <a href="login.html" class="btn btn-small">
+            <a href="login.html" class="btn btn-small btn-light">
                 Login
             </a>
 
-            <a href="register.html" class="btn btn-small btn-secondary">
+            <a href="register.html" class="btn btn-small">
                 Register
             </a>
 
-        </nav>
+        </div>
 
     </header>
 
 
-    <!-- ============ MAIN CONTAINER ============ -->
+    <!-- ============ NAVIGATION ============ -->
+    <nav class="topnav">
+
+        <a href="#home" class="active">Home</a>
+
+        <a href="#about">About Us</a>
+
+        <a href="#menu">Our Menu</a>
+
+        <a href="#features">Features</a>
+
+        <a href="#actors">Management System</a>
+
+        <a href="#how">How It Works</a>
+
+        <a href="#contact">Contact</a>
+
+    </nav>
+
+
+    <!-- ============ HERO SECTION ============ -->
+    <section id="home" class="hero-section">
+
+        <div class="hero-content">
+
+            <p class="hero-tagline">
+                WELCOME TO COFFEE CORNER
+            </p>
+
+            <h1>
+                Your Perfect Coffee,
+                <span>Your Perfect Moment</span>
+            </h1>
+
+            <p>
+                Enjoy your favourite coffee with personalized
+                customization, easy ordering and a smooth
+                coffee shop experience.
+            </p>
+
+            <div class="hero-actions">
+
+                <a href="login.html" class="btn">
+                    Order Your Coffee
+                </a>
+
+                <a href="#menu" class="btn btn-secondary">
+                    Explore Our Menu
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
     <main>
 
 
-        <!-- ============ HERO SECTION ============ -->
-        <section id="home" class="hero-section">
+        <!-- ============ KEY FEATURES STRIP ============ -->
+        <section class="container">
 
-            <div class="hero-content">
+            <div class="stats-grid">
 
-                <p class="hero-tagline">
-                    WELCOME TO COFFEE CORNER
-                </p>
+                <div class="stat-card">
 
-                <h1>
-                    Your Perfect Coffee,
-                    <span>Your Perfect Moment</span>
-                </h1>
+                    <div class="stat-number">01</div>
 
-                <p>
-                    Enjoy your favourite coffee with personalized
-                    customization, easy ordering and a smooth
-                    coffee shop experience.
-                </p>
+                    <div class="stat-label">
+                        Custom Coffee
+                    </div>
 
-                <div class="hero-actions">
+                    <p>
+                        Customize your coffee according to
+                        your personal preferences.
+                    </p>
 
-                    <a href="login.html" class="btn">
-                        Order Your Coffee
-                    </a>
+                </div>
 
-                    <a href="#menu" class="btn btn-secondary">
-                        Explore Our Menu
-                    </a>
+
+                <div class="stat-card">
+
+                    <div class="stat-number">02</div>
+
+                    <div class="stat-label">
+                        Easy Ordering
+                    </div>
+
+                    <p>
+                        Place orders and track your coffee
+                        preparation easily.
+                    </p>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-number">03</div>
+
+                    <div class="stat-label">
+                        Smart Billing
+                    </div>
+
+                    <p>
+                        Generate bills and manage customer
+                        payments efficiently.
+                    </p>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-number">04</div>
+
+                    <div class="stat-label">
+                        Stock Management
+                    </div>
+
+                    <p>
+                        Monitor stock quantities and
+                        manage daily shop operations.
+                    </p>
 
                 </div>
 
@@ -87,7 +169,7 @@
 
 
         <!-- ============ ABOUT SECTION ============ -->
-        <section id="about" class="container page-section">
+        <section id="about" class="container">
 
             <h2 class="page-title">
                 About Coffee Corner
@@ -143,7 +225,7 @@
 
 
         <!-- ============ MENU SECTION ============ -->
-        <section id="menu" class="container page-section">
+        <section id="menu" class="container">
 
             <h2 class="page-title">
                 Explore Our Menu
@@ -235,7 +317,7 @@
 
 
         <!-- ============ FEATURES SECTION ============ -->
-        <section id="features" class="container page-section">
+        <section id="features" class="container">
 
             <h2 class="page-title">
                 Our Smart Features
@@ -327,8 +409,8 @@
 
 
 
-        <!-- ============ ACTOR SECTION ============ -->
-        <section class="container page-section">
+        <!-- ============ ACTOR / ROLE SECTION ============ -->
+        <section id="actors" class="container">
 
             <h2 class="page-title">
                 Our Management System
@@ -340,9 +422,14 @@
             </p>
 
 
-            <div class="row">
+            <div class="role-grid">
 
-                <div class="col card">
+                <!-- CUSTOMER -->
+                <div class="card">
+
+                    <span class="badge customer">
+                        Customer
+                    </span>
 
                     <h3>Customer</h3>
 
@@ -358,7 +445,12 @@
                 </div>
 
 
-                <div class="col card">
+                <!-- CASHIER -->
+                <div class="card">
+
+                    <span class="badge cashier">
+                        Cashier
+                    </span>
 
                     <h3>Cashier</h3>
 
@@ -374,7 +466,12 @@
                 </div>
 
 
-                <div class="col card">
+                <!-- STAFF / BARISTA -->
+                <div class="card">
+
+                    <span class="badge staff">
+                        Staff / Barista
+                    </span>
 
                     <h3>Staff / Barista</h3>
 
@@ -390,7 +487,12 @@
                 </div>
 
 
-                <div class="col card">
+                <!-- ADMINISTRATOR -->
+                <div class="card">
+
+                    <span class="badge admin">
+                        Administrator
+                    </span>
 
                     <h3>Administrator</h3>
 
@@ -411,8 +513,70 @@
 
 
 
+        <!-- ============ HOW IT WORKS ============ -->
+        <section id="how" class="container">
+
+            <h2 class="page-title">
+                How It Works
+            </h2>
+
+            <p class="page-subtitle">
+                Three simple steps to use Coffee Corner.
+            </p>
+
+
+            <div class="row">
+
+                <div class="col card">
+
+                    <div class="stat-number">1</div>
+
+                    <h3>Register</h3>
+
+                    <p>
+                        Create an account and select your
+                        preferred account type.
+                    </p>
+
+                </div>
+
+
+                <div class="col card">
+
+                    <div class="stat-number">2</div>
+
+                    <h3>Log In</h3>
+
+                    <p>
+                        Use the single login page to access
+                        your role-based dashboard.
+                    </p>
+
+                </div>
+
+
+                <div class="col card">
+
+                    <div class="stat-number">3</div>
+
+                    <h3>Use the System</h3>
+
+                    <p>
+                        Order coffee, manage payments,
+                        prepare orders or control shop operations
+                        according to your role.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
         <!-- ============ CALL TO ACTION ============ -->
-        <section class="container page-section">
+        <section class="container">
 
             <div class="card" style="text-align: center;">
 
@@ -425,13 +589,17 @@
                     a simple and convenient coffee ordering system.
                 </p>
 
-                <a href="register.html" class="btn">
-                    Create Your Account
-                </a>
+                <div class="hero-actions">
 
-                <a href="login.html" class="btn btn-secondary">
-                    Login Now
-                </a>
+                    <a href="register.html" class="btn">
+                        Create Your Account
+                    </a>
+
+                    <a href="login.html" class="btn btn-secondary">
+                        Login Now
+                    </a>
+
+                </div>
 
             </div>
 
@@ -440,7 +608,7 @@
 
 
         <!-- ============ CONTACT SECTION ============ -->
-        <section id="contact" class="container page-section">
+        <section id="contact" class="container">
 
             <h2 class="page-title">
                 Contact Us
@@ -473,7 +641,9 @@
 
         </section>
 
+
     </main>
+
 
 
     <!-- ============ FOOTER ============ -->

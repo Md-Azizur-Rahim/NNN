@@ -1,37 +1,47 @@
 
-/* =========================================================
-   COFFEE CORNER - COMMON JAVASCRIPT
-   Shared Functions for All User Dashboards
-   Updated for Root-Level Actor HTML Files
-   ========================================================= */
+
 
 
 /* ==================== 1. APPLICATION SETTINGS ==================== */
 
-const CURRENT_USER_KEY = "coffee_current_user";
+let activeUser = null;
 
 
 /* ==================== 2. GET CURRENT USER ==================== */
 
 function getCurrentUser() {
 
-    try {
-
-        const userData = localStorage.getItem(CURRENT_USER_KEY);
-
-        if (!userData) {
-            return null;
-        }
-
-        return JSON.parse(userData);
-
-    } catch (error) {
-
-        console.error("Unable to get current user:", error);
-
-        return null;
-
+    // Check current page memory first
+    if (activeUser) {
+        return activeUser;
     }
+
+    // Get user ID from URL
+    const params = new URLSearchParams(window.location.search);
+
+    const userId = params.get("userId");
+
+    if (!userId) {
+        return null;
+    }
+
+    // Find user from in-memory database
+    if (
+        typeof CoffeeData === "undefined" ||
+        !CoffeeData
+    ) {
+        return null;
+    }
+
+    const users = CoffeeData.get("users");
+
+    activeUser = users.find(function (user) {
+
+        return String(user.id) === String(userId);
+
+    }) || null;
+
+    return activeUser;
 
 }
 
@@ -44,22 +54,9 @@ function setCurrentUser(user) {
         return false;
     }
 
-    try {
+    activeUser = user;
 
-        localStorage.setItem(
-            CURRENT_USER_KEY,
-            JSON.stringify(user)
-        );
-
-        return true;
-
-    } catch (error) {
-
-        console.error("Unable to save current user:", error);
-
-        return false;
-
-    }
+    return true;
 
 }
 
@@ -79,7 +76,9 @@ function requireRole(requiredRole) {
 
     const currentUser = getCurrentUser();
 
+
     // Check login status
+
     if (!currentUser) {
 
         alert("Please login first.");
@@ -90,14 +89,16 @@ function requireRole(requiredRole) {
 
     }
 
+
     // Check account status
+
     if (currentUser.status !== "Active") {
 
         alert(
             "Your account is inactive. Please contact the administrator."
         );
 
-        localStorage.removeItem(CURRENT_USER_KEY);
+        activeUser = null;
 
         window.location.href = getRootPath() + "login.html";
 
@@ -105,7 +106,9 @@ function requireRole(requiredRole) {
 
     }
 
+
     // Check user role
+
     if (currentUser.role !== requiredRole) {
 
         alert(
@@ -125,9 +128,6 @@ function requireRole(requiredRole) {
 
 /* ==================== 6. ROOT PATH HELPER ==================== */
 
-// All actor HTML files are now inside the onn/ root folder.
-// Therefore, no ../ path is required.
-
 function getRootPath() {
 
     return "";
@@ -141,41 +141,66 @@ function redirectToDashboard(role) {
 
     const rootPath = getRootPath();
 
+    const currentUser = getCurrentUser();
+
+    let dashboardPage = "login.html";
+
+
     switch (role) {
 
         case "Administrator":
 
-            window.location.href = rootPath + "admin.html";
+            dashboardPage = "admin.html";
 
             break;
 
 
         case "Customer":
 
-            window.location.href = rootPath + "customer.html";
+            dashboardPage = "customer.html";
 
             break;
 
 
         case "Cashier":
 
-            window.location.href = rootPath + "cashier.html";
+            dashboardPage = "cashier.html";
 
             break;
 
 
         case "Staff":
 
-            window.location.href = rootPath + "barista.html";
+            dashboardPage = "barista.html";
 
             break;
 
 
         default:
 
-            window.location.href = rootPath + "login.html";
+            dashboardPage = "login.html";
 
     }
+
+
+    // Pass user ID through URL
+
+    let userQuery = "";
+
+    if (
+        currentUser &&
+        currentUser.id !== undefined &&
+        dashboardPage !== "login.html"
+    ) {
+
+        userQuery = "?userId=" +
+            encodeURIComponent(currentUser.id);
+
+    }
+
+
+    window.location.href =
+        rootPath + dashboardPage + userQuery;
 
 }
 
@@ -192,9 +217,9 @@ function logout() {
         return false;
     }
 
-    localStorage.removeItem(CURRENT_USER_KEY);
+    // Clear current user from memory
 
-    localStorage.removeItem("coffee_current_bill");
+    activeUser = null;
 
     window.location.href = getRootPath() + "login.html";
 
@@ -207,13 +232,16 @@ function logout() {
 
 function showSection(sectionId) {
 
-    const sections = document.querySelectorAll(".page-section");
+    const sections = document.querySelectorAll(
+        ".page-section"
+    );
 
     const navigationButtons = document.querySelectorAll(
         ".topnav button"
     );
 
     const selectedSection = document.getElementById(sectionId);
+
 
     if (!selectedSection) {
 
@@ -223,24 +251,32 @@ function showSection(sectionId) {
 
     }
 
+
     // Hide all sections
+
     sections.forEach(function (section) {
 
         section.classList.remove("active");
 
     });
 
+
     // Remove active navigation styling
+
     navigationButtons.forEach(function (button) {
 
         button.classList.remove("active");
 
     });
 
+
     // Display selected section
+
     selectedSection.classList.add("active");
 
+
     // Activate corresponding navigation button
+
     const activeButton = document.getElementById(
         "nav-" + sectionId
     );
@@ -256,30 +292,40 @@ function showSection(sectionId) {
 }
 
 
-/* ==================== 10. INITIALIZE DASHBOARD NAVIGATION ==================== */
+/* ==================== 10. INITIALIZE DASHBOARD ==================== */
 
 function initializeDashboard() {
 
-    const sections = document.querySelectorAll(".page-section");
+    const sections = document.querySelectorAll(
+        ".page-section"
+    );
 
     if (sections.length === 0) {
         return;
     }
 
+
     // Get current logged-in user
+
     const currentUser = getCurrentUser();
 
+
     // Display logged-in user's name
-    const welcomeElement = document.getElementById("welcomeUser");
+
+    const welcomeElement = document.getElementById(
+        "welcomeUser"
+    );
 
     if (welcomeElement && currentUser) {
 
         welcomeElement.textContent =
-            currentUser.name || "User";
+            "Welcome, " + (currentUser.name || "User");
 
     }
 
+
     // Activate first dashboard section
+
     const firstSection = sections[0];
 
     showSection(firstSection.id);
@@ -300,6 +346,7 @@ function setMessage(elementId, message, type) {
     messageElement.textContent = message;
 
     messageElement.className = "message";
+
 
     if (type === "success") {
 
@@ -406,7 +453,7 @@ function formatMoney(amount) {
 
 /* ==================== 17. DATE AND TIME ==================== */
 
-// Returns local date and time in YYYY-MM-DDTHH:mm:ss format.
+// Returns local date and time.
 
 function getCurrentDateTime() {
 
@@ -414,29 +461,42 @@ function getCurrentDateTime() {
 
     const year = now.getFullYear();
 
-    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const month = String(
+        now.getMonth() + 1
+    ).padStart(2, "0");
 
-    const day = String(now.getDate()).padStart(2, "0");
+    const day = String(
+        now.getDate()
+    ).padStart(2, "0");
 
-    const hours = String(now.getHours()).padStart(2, "0");
+    const hours = String(
+        now.getHours()
+    ).padStart(2, "0");
 
-    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const minutes = String(
+        now.getMinutes()
+    ).padStart(2, "0");
 
-    const seconds = String(now.getSeconds()).padStart(2, "0");
+    const seconds = String(
+        now.getSeconds()
+    ).padStart(2, "0");
+
 
     return (
+
         year + "-" +
         month + "-" +
         day + "T" +
         hours + ":" +
         minutes + ":" +
         seconds
+
     );
 
 }
 
 
-// Returns local date in YYYY-MM-DD format.
+// Returns local date.
 
 function getCurrentDate() {
 
@@ -444,9 +504,14 @@ function getCurrentDate() {
 
     const year = today.getFullYear();
 
-    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const month = String(
+        today.getMonth() + 1
+    ).padStart(2, "0");
 
-    const day = String(today.getDate()).padStart(2, "0");
+    const day = String(
+        today.getDate()
+    ).padStart(2, "0");
+
 
     return year + "-" + month + "-" + day;
 
@@ -499,6 +564,7 @@ function getStatusBadge(status) {
 
     let badgeClass = "";
 
+
     switch (String(status || "").toLowerCase()) {
 
         case "active":
@@ -542,6 +608,7 @@ function getStatusBadge(status) {
 
     }
 
+
     return '<span class="status-badge ' +
         badgeClass + '">' + safeStatus + '</span>';
 
@@ -558,19 +625,29 @@ function showEmptyTable(tableBodyId, columnCount, message) {
         return;
     }
 
+
     const safeColumnCount = Math.max(
+
         1,
+
         Number(columnCount) || 1
+
     );
+
 
     const safeMessage = escapeHTML(
         message || "No records found."
     );
 
+
     tableBody.innerHTML =
+
         '<tr><td colspan="' + safeColumnCount +
+
         '" style="text-align:center; padding:20px;">' +
+
         safeMessage +
+
         '</td></tr>';
 
 }
@@ -588,18 +665,25 @@ function searchRecords(records, searchText, fields) {
         return records;
     }
 
-    const keyword = String(searchText || "").toLowerCase().trim();
+
+    const keyword = String(
+        searchText || ""
+    ).toLowerCase().trim();
+
 
     if (!keyword) {
         return records;
     }
+
 
     return records.filter(function (record) {
 
         return fields.some(function (field) {
 
             return String(record[field] || "")
+
                 .toLowerCase()
+
                 .includes(keyword);
 
         });
@@ -624,7 +708,9 @@ function getUserById(userId) {
 
     }
 
+
     const users = CoffeeData.get("users");
+
 
     return users.find(function (user) {
 
@@ -650,7 +736,9 @@ function getCustomerOrders(customerId) {
 
     }
 
+
     const orders = CoffeeData.get("orders");
+
 
     return orders.filter(function (order) {
 
@@ -676,11 +764,14 @@ function getOrderByToken(orderToken) {
 
     }
 
+
     const orders = CoffeeData.get("orders");
+
 
     return orders.find(function (order) {
 
         return String(order.token || "").toLowerCase() ===
+
             String(orderToken || "").toLowerCase();
 
     }) || null;
@@ -693,20 +784,27 @@ function getOrderByToken(orderToken) {
 function makeTable(records, columns) {
 
     if (
+
         !Array.isArray(records) ||
+
         records.length === 0 ||
+
         !Array.isArray(columns)
+
     ) {
 
         return "";
 
     }
 
+
     let html = "";
+
 
     records.forEach(function (record) {
 
         html += "<tr>";
+
 
         columns.forEach(function (column) {
 
@@ -716,9 +814,11 @@ function makeTable(records, columns) {
 
         });
 
+
         html += "</tr>";
 
     });
+
 
     return html;
 
@@ -730,19 +830,31 @@ function makeTable(records, columns) {
 function confirmDelete(message) {
 
     return confirm(
-        message || "Are you sure you want to delete this record?"
+
+        message ||
+
+        "Are you sure you want to delete this record?"
+
     );
 
 }
 
 
 /* ==================== 26. INITIALIZE COMMON FEATURES ==================== */
+
 document.addEventListener("DOMContentLoaded", function () {
 
+    // Disable browser's automatic form validation
+
     document.querySelectorAll("form").forEach(function (form) {
+
         form.noValidate = true;
+
     });
+
+
+    // Initialize dashboard
 
     initializeDashboard();
 
-});;
+});
